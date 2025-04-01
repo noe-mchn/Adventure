@@ -1,0 +1,56 @@
+project(Entities)
+
+set(HEADER_DIR ${CMAKE_CURRENT_SOURCE_DIR}/include)
+set(SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
+
+
+set(HEADERS
+${HEADER_DIR}/Entity.h
+${HEADER_DIR}/Player.h
+${HEADER_DIR}/Enemy.h
+${HEADER_DIR}/NPC.h
+)
+set(SOURCES
+${SOURCE_DIR}/Entity.cpp
+${SOURCE_DIR}/Player.cpp
+${SOURCE_DIR}/Enemy.cpp
+${SOURCE_DIR}/NPC.cpp
+)
+
+add_library(${PROJECT_NAME}
+
+${SOURCES}
+${HEADERS}
+)
+
+
+target_include_directories(${PROJECT_NAME}
+PUBLIC
+    $<INSTALL_INTERFACE:include>
+    $<BUILD_INTERFACE:${HEADER_DIR}>
+)
+
+target_include_directories(Entities PUBLIC ${SFML_INCLUDE_DIR}) 
+
+link_directories(${SFML_LIB_DIR})
+
+target_link_libraries(${PROJECT_NAME}
+    PUBLIC
+    States
+    System
+    Utils
+    World
+    PRIVATE
+        sfml-graphics-d
+        sfml-window-d
+        sfml-system-d
+        sfml-audio-d
+        sfml-network-d
+        
+)
+
+add_custom_command(TARGET Entities POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+    ${SFML_BIN_DIR} $<TARGET_FILE_DIR:Entities>
+)
+set_target_properties(${PROJECT_NAME} PROPERTIES FOLDER "Entities")
