@@ -8,12 +8,14 @@ set(HEADERS
 ${HEADER_DIR}/Entity.h
 ${HEADER_DIR}/Player.h
 ${HEADER_DIR}/Enemy.h
+${HEADER_DIR}/Objects.h
 ${HEADER_DIR}/NPC.h
 )
 set(SOURCES
 ${SOURCE_DIR}/Entity.cpp
 ${SOURCE_DIR}/Player.cpp
 ${SOURCE_DIR}/Enemy.cpp
+${SOURCE_DIR}/Objects.cpp
 ${SOURCE_DIR}/NPC.cpp
 )
 
@@ -36,17 +38,20 @@ link_directories(${SFML_LIB_DIR})
 
 target_link_libraries(${PROJECT_NAME}
     PUBLIC
-    States
-    System
-    Utils
-    World
+        Audio
+        Features
+        Graphics
+        States
+        System
+        UI
+        Utils
+        World
     PRIVATE
         sfml-graphics-d
         sfml-window-d
         sfml-system-d
         sfml-audio-d
         sfml-network-d
-        
 )
 
 add_custom_command(TARGET Entities POST_BUILD

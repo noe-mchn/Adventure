@@ -7,10 +7,14 @@ set(SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
 set(HEADERS
 ${HEADER_DIR}/RessourceManager.h
 ${HEADER_DIR}/InputManager.h
+${HEADER_DIR}/SaveSystem.h
+${HEADER_DIR}/EventSystem.h
 )
 set(SOURCES
 ${SOURCE_DIR}/RessourceManager.cpp
 ${SOURCE_DIR}/InputManager.cpp
+${SOURCE_DIR}/SaveSystem.cpp
+${SOURCE_DIR}/EventSystem.cpp
 )
 
 add_library(${PROJECT_NAME}
@@ -31,11 +35,6 @@ target_include_directories(Utils PUBLIC ${SFML_INCLUDE_DIR})
 link_directories(${SFML_LIB_DIR})
 
 target_link_libraries(${PROJECT_NAME}
-    PUBLIC
-    Entities
-    States
-    System
-    World
     PRIVATE
         sfml-graphics-d
         sfml-window-d

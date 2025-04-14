@@ -3,50 +3,54 @@ project(World)
 set(HEADER_DIR ${CMAKE_CURRENT_SOURCE_DIR}/include)
 set(SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
 
-
 set(HEADERS
-${HEADER_DIR}/Level.h
-${HEADER_DIR}/Tilemap.h
+    ${HEADER_DIR}/Level.h
+    ${HEADER_DIR}/Tilemap.h
+    ${HEADER_DIR}/Checkpoint.h
+    ${HEADER_DIR}/Background.h
+    ${HEADER_DIR}/LevelLoader.h
 )
+
 set(SOURCES
-${SOURCE_DIR}/Level.cpp
-${SOURCE_DIR}/Tilemap.cpp
+    ${SOURCE_DIR}/Level.cpp
+    ${SOURCE_DIR}/Tilemap.cpp
+    ${SOURCE_DIR}/Checkpoint.cpp
+    ${SOURCE_DIR}/Background.cpp
+    ${SOURCE_DIR}/LevelLoader.cpp
 )
 
-add_library(${PROJECT_NAME}
+add_library(${PROJECT_NAME} ${SOURCES} ${HEADERS})
 
-${SOURCES}
-${HEADERS}
-)
-
-
+# Inclure les répertoires d'en-têtes
 target_include_directories(${PROJECT_NAME}
-PUBLIC
-    $<INSTALL_INTERFACE:include>
-    $<BUILD_INTERFACE:${HEADER_DIR}>
+    PUBLIC
+        $<BUILD_INTERFACE:${HEADER_DIR}>  # Répertoire d'en-têtes pour le projet
+        ${SFML_INCLUDE_DIR}               # Répertoire d'en-têtes pour SFML
 )
 
-target_include_directories(World PUBLIC ${SFML_INCLUDE_DIR}) 
-
+# Ajouter les répertoires de liens pour SFML
 link_directories(${SFML_LIB_DIR})
 
+# Lier les bibliothèques nécessaires
 target_link_libraries(${PROJECT_NAME}
     PUBLIC
-    Entities
-    States
-    System
-    Utils
+        Entities
+        Features
+        System
+        Utils
     PRIVATE
         sfml-graphics-d
         sfml-window-d
         sfml-system-d
         sfml-audio-d
         sfml-network-d
-        
 )
 
-add_custom_command(TARGET World POST_BUILD
+# Copier les fichiers binaires de SFML après la compilation
+add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory
-    ${SFML_BIN_DIR} $<TARGET_FILE_DIR:World>
+    ${SFML_BIN_DIR} $<TARGET_FILE_DIR:${PROJECT_NAME}>
 )
+
+# Propriétés du projet
 set_target_properties(${PROJECT_NAME} PROPERTIES FOLDER "World")

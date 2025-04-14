@@ -7,10 +7,12 @@ set(SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
 set(HEADERS
 ${HEADER_DIR}/Game.h
 ${HEADER_DIR}/StateManager.h
+${HEADER_DIR}/Application.h
 )
 set(SOURCES
 ${SOURCE_DIR}/Game.cpp
 ${SOURCE_DIR}/StateManager.cpp
+${SOURCE_DIR}/Application.cpp
 )
 
 add_library(${PROJECT_NAME}
@@ -32,10 +34,8 @@ link_directories(${SFML_LIB_DIR})
 
 target_link_libraries(${PROJECT_NAME}
     PUBLIC
-    Entities
-    States
-    Utils
-    World
+        Utils
+        States
     PRIVATE
         sfml-graphics-d
         sfml-window-d

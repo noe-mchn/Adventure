@@ -1,26 +1,35 @@
 cmake_minimum_required(VERSION 3.10.0)
 project(JeuAventure VERSION 2.0.0)
 
+# Définition des répertoires de sortie
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/app/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/app/lib)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/app/bin)
 
-
+# Définition des chemins pour SFML
 set(SFML_INCLUDE_DIR "${CMAKE_SOURCE_DIR}/SFML/include")
 set(SFML_LIB_DIR "${CMAKE_SOURCE_DIR}/SFML/lib")
 set(SFML_BIN_DIR "${CMAKE_SOURCE_DIR}/SFML/bin")
 
-
+# Ajout des chemins pour les fichiers d'en-tête
 include_directories(${SFML_INCLUDE_DIR})
 link_directories(${SFML_LIB_DIR})
 
+# Activation des dossiers dans Visual Studio (si utilisé)
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
+# Configuration du standard C++
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+
+add_subdirectory(Utils)
 add_subdirectory(System)
 add_subdirectory(States)
 add_subdirectory(Entities)
 add_subdirectory(World)
-add_subdirectory(Utils)
+add_subdirectory(Features)
+add_subdirectory(Graphics)
+add_subdirectory(UI)
+add_subdirectory(Audio)
 add_subdirectory(sample)

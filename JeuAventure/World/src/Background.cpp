@@ -1,0 +1,127 @@
+#include "Background.h"
+#include "RessourceManager.h"
+#include <iostream>
+
+Background::Background()
+    : m_cameraPosition(0.0f, 0.0f),
+    m_size(800.0f, 600.0f),
+    m_backgroundColor(sf::Color(40, 40, 60)),
+    m_parallaxFactor(1.0f) {
+}
+
+Background::Background(const sf::Texture& texture)
+    : m_cameraPosition(0.0f, 0.0f),
+    m_backgroundColor(sf::Color(40, 40, 60)),
+    m_parallaxFactor(1.0f) {
+    addLayer(texture, 0.0f, true);
+    m_size = sf::Vector2f(texture.getSize().x, texture.getSize().y);
+}
+
+Background::~Background() {
+}
+
+void Background::addLayer(const sf::Texture& texture, float scrollSpeed, bool repeat) {
+    ParallaxLayer layer;
+    layer.sprite.setTexture(texture);
+    layer.scrollSpeed = scrollSpeed;
+    layer.repeat = repeat;
+    layer.offset = sf::Vector2f(0.0f, 0.0f);
+
+    if (repeat) {
+        const_cast<sf::Texture&>(texture).setRepeated(true);
+        layer.sprite.setTextureRect(sf::IntRect(0, 0, static_cast<int>(m_size.x * 2), static_cast<int>(m_size.y)));
+    }
+
+    m_layers.push_back(layer);
+}
+
+void Background::addLayer(const std::string& texturePath, float scrollSpeed, bool repeat) {
+    sf::Texture* texture = nullptr;
+    texture = RessourceManager::getInstance()->getTexture(texturePath);
+
+    if (!texture) {
+        if (RessourceManager::getInstance()->loadTexture(texturePath, texturePath)) {
+            texture = RessourceManager::getInstance()->getTexture(texturePath);
+        }
+        else {
+            std::cerr << "Failed to load background texture: " << texturePath << std::endl;
+            return;
+        }
+    }
+
+    if (texture) {
+        addLayer(*texture, scrollSpeed, repeat);
+    }
+}
+
+void Background::clearLayers() {
+    m_layers.clear();
+    m_textures.clear();
+}
+
+void Background::setBackgroundColor(const sf::Color& color) {
+    m_backgroundColor = color;
+}
+
+void Background::setParallaxFactor(float factor) {
+    m_parallaxFactor = factor;
+}
+
+void Background::setSize(const sf::Vector2f& size) {
+    m_size = size;
+
+    for (auto& layer : m_layers) {
+        if (layer.repeat) {
+            layer.sprite.setTextureRect(sf::IntRect(0, 0, static_cast<int>(m_size.x * 2), static_cast<int>(m_size.y)));
+        }
+    }
+}
+
+void Background::update(float dt) {
+}
+
+void Background::render(sf::RenderWindow& window) {
+    sf::RectangleShape background(sf::Vector2f(window.getView().getSize().x, window.getView().getSize().y));
+    background.setFillColor(m_backgroundColor);
+
+    sf::View originalView = window.getView();
+    window.setView(window.getDefaultView());
+    window.draw(background);
+    window.setView(originalView);
+
+    for (auto& layer : m_layers) {
+        sf::Vector2f viewCenter = window.getView().getCenter();
+        sf::Vector2f parallaxOffset(
+            (viewCenter.x - m_size.x / 2) * layer.scrollSpeed * m_parallaxFactor,
+            (viewCenter.y - m_size.y / 2) * layer.scrollSpeed * m_parallaxFactor * 0.5f
+        );
+
+        if (layer.repeat) {
+            float viewWidth = window.getView().getSize().x;
+            float viewHeight = window.getView().getSize().y;
+
+            sf::Vector2f textureSize(layer.sprite.getTexture()->getSize());
+            float posX = viewCenter.x - viewWidth / 2 - std::fmod(parallaxOffset.x, textureSize.x);
+            float posY = viewCenter.y - viewHeight / 2 - std::fmod(parallaxOffset.y, textureSize.y);
+
+            layer.sprite.setPosition(posX, posY);
+
+            sf::IntRect textureRect = layer.sprite.getTextureRect();
+            textureRect.width = std::max(textureRect.width, static_cast<int>(viewWidth * 2));
+            textureRect.height = std::max(textureRect.height, static_cast<int>(viewHeight * 2));
+            layer.sprite.setTextureRect(textureRect);
+        }
+        else {
+            layer.sprite.setPosition(
+                viewCenter.x - layer.sprite.getTexture()->getSize().x / 2 - parallaxOffset.x,
+                viewCenter.y - layer.sprite.getTexture()->getSize().y / 2 - parallaxOffset.y
+            );
+        }
+
+        window.draw(layer.sprite);
+    }
+}
+
+void Background::setCameraPosition(const sf::Vector2f& position) {
+    m_cameraPosition = position;
+}

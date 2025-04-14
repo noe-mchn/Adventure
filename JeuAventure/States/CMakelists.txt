@@ -8,11 +8,15 @@ set(HEADERS
 ${HEADER_DIR}/State.h
 ${HEADER_DIR}/MenuState.h
 ${HEADER_DIR}/GameState.h
+${HEADER_DIR}/PauseState.h
+${HEADER_DIR}/GameOverState.h
 )
 set(SOURCES
 ${SOURCE_DIR}/State.cpp
 ${SOURCE_DIR}/MenuState.cpp
 ${SOURCE_DIR}/GameState.cpp
+${SOURCE_DIR}/PauseState.cpp
+${SOURCE_DIR}/GameOverState.cpp
 )
 
 add_library(${PROJECT_NAME}
@@ -34,10 +38,10 @@ link_directories(${SFML_LIB_DIR})
 
 target_link_libraries(${PROJECT_NAME}
     PUBLIC
-    Entities
-    System
-    Utils
-    World
+        Features
+        System
+        Utils
+        World
     PRIVATE
         sfml-graphics-d
         sfml-window-d

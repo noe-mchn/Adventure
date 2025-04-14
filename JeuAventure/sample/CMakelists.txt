@@ -2,18 +2,19 @@ project(sample)
 
 set(SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
 
-message(STATUS ${SOURCE_DIR})
+message(STATUS "Sample source dir: ${SOURCE_DIR}")
 
 set(SOURCES
- ${SOURCE_DIR}/main.cpp
+    ${SOURCE_DIR}/main.cpp
 )
 
 add_executable(${PROJECT_NAME}
-${SOURCES}
+    ${SOURCES}
 )
 
-target_include_directories(sample PUBLIC ${SFML_INCLUDE_DIR}) 
+target_include_directories(${PROJECT_NAME} PUBLIC ${SFML_INCLUDE_DIR})
 link_directories(${SFML_LIB_DIR})
+
 target_link_libraries(${PROJECT_NAME}
     PUBLIC
         Entities
@@ -21,16 +22,21 @@ target_link_libraries(${PROJECT_NAME}
         System
         Utils
         World
+        Features
+        Graphics
+        UI
+        Audio
     PRIVATE
         sfml-graphics-d
         sfml-window-d
         sfml-system-d
         sfml-audio-d
         sfml-network-d
-        
 )
-add_custom_command(TARGET sample POST_BUILD
+
+add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory
-    ${SFML_BIN_DIR} $<TARGET_FILE_DIR:sample>
+    ${SFML_BIN_DIR} $<TARGET_FILE_DIR:${PROJECT_NAME}>
 )
-set_target_properties(${PROJECT_NAME} PROPERTIES FOLDER "Work")
+
+set_target_properties(${PROJECT_NAME} PROPERTIES FOLDER "Sample")
