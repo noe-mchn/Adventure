@@ -9,7 +9,7 @@ Game::Game() :
     m_isRunning(false),
     m_isPaused(false),
     m_windowWidth(800),
-    m_windowHeight(600),
+    m_windowHeight(400),
     m_windowTitle("Platformer Game"),
     m_isFullscreen(false),
     m_targetFPS(60),
@@ -133,7 +133,6 @@ void Game::update(float dt) {
 void Game::render() {
     m_window->clear(sf::Color(20, 20, 50));
 
-    // Différencier le rendu selon l'état actif
     if (m_stateManager->getActiveStateType() == StateType::Game) {
         m_window->setView(m_window->getDefaultView());
     }

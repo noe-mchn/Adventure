@@ -1459,3 +1459,110 @@ bool Dropdown::isOpen() const {
 void Dropdown::setOnSelectionChangedCallback(const std::function<void(int, const std::string&)>& callback) {
     m_onSelectionChanged = callback;
 }
+
+//
+//// ----------------- Dialogue Implementation -----------------
+//
+//
+//DialogueBox::DialogueBox(const sf::Font& font, const sf::Vector2f& position, const sf::Vector2f& size)
+//    : m_currentLine(0) {
+//
+//    m_background = Panel("dialoguePanel", position, size);
+//    m_background.setBackgroundColor(sf::Color(0, 0, 0, 180));
+//    m_background.setBorder(true);
+//
+//    m_textLabel = Label("dialogueText", "", position + sf::Vector2f(10.f, 10.f));
+//    m_textLabel.setFont(font);
+//    m_textLabel.setTextColor(sf::Color::White);
+//    m_textLabel.setCharacterSize(18);
+//
+//    m_nextButton = Button("nextBtn", "Suivant",
+//        position + sf::Vector2f(size.x - 110.f, size.y - 40.f),
+//        { 100.f, 30.f });
+//    m_nextButton.setFont(font);
+//    m_nextButton.setOnClickCallback([this]() 
+//        {
+//        this->nextLine();
+//        });
+//}
+//
+//void DialogueBox::setDialogueLines(const std::vector<std::string>& lines) {
+//    m_lines = lines;
+//    m_currentLine = 0;
+//
+//    if (!m_lines.empty()) {
+//        m_fullText = m_lines[0];
+//        m_displayedText.clear();
+//        m_elapsedTime = 0.f;
+//        m_textFullyDisplayed = false;
+//        m_textLabel.setText("");
+//    }
+//}
+//
+//void DialogueBox::setOnDialogueEndCallback(const std::function<void()>& callback) {
+//    m_onDialogueEnd = callback;
+//}
+//
+//void DialogueBox::nextLine() {
+//    if (!m_textFullyDisplayed) 
+//    {
+//        m_displayedText = m_fullText;
+//        m_textLabel.setText(m_displayedText);
+//        m_textFullyDisplayed = true;
+//        return;
+//    }
+//
+//    m_currentLine++;
+//    if (m_currentLine < m_lines.size()) 
+//    {
+//        m_fullText = m_lines[m_currentLine];
+//        m_displayedText.clear();
+//        m_elapsedTime = 0.f;
+//        m_textFullyDisplayed = false;
+//        m_textLabel.setText("");
+//    }
+//    else
+//    {
+//        if (m_onDialogueEnd)
+//            m_onDialogueEnd();
+//    }
+//}
+//
+//void DialogueBox::update(float dt)
+//{
+//    updateTypewriter(dt);
+//    m_background.update(dt);
+//    m_textLabel.update(dt);
+//    m_nextButton.update(dt);
+//}
+//
+//void DialogueBox::updateTypewriter(float dt)
+//{
+//    if (m_textFullyDisplayed || m_fullText.empty()) return;
+//
+//    m_elapsedTime += dt;
+//
+//    if (m_elapsedTime >= m_typewriterSpeed) 
+//    {
+//        if (m_displayedText.size() < m_fullText.size())
+//        {
+//            m_displayedText += m_fullText[m_displayedText.size()];
+//            m_textLabel.setText(m_displayedText);
+//        }
+//        else 
+//            m_textFullyDisplayed = true;
+//        m_elapsedTime = 0.f;
+//    }
+//}
+//
+//void DialogueBox::render(sf::RenderTarget& target)
+//{
+//    m_background.render(target);
+//    m_textLabel.render(target);
+//    m_nextButton.render(target);
+//}
+//
+//bool DialogueBox::handleEvent(const sf::Event& event)
+//{
+//    return m_nextButton.handleEvent(event);
+//}

@@ -417,14 +417,21 @@ void Level::handleEvent(const sf::Event& event) {
 }
 
 void Level::addPlatformLayer(sf::Texture* texture) {
-    if (texture) {
+    if (texture) 
+    {
         auto platformSprite = std::make_unique<sf::Sprite>(*texture);
         sf::Vector2u texSize = texture->getSize();
 
-        float coefficient = 1.5f;
-        float scaleX = (m_width / static_cast<float>(texSize.x)) * coefficient;
-        float scaleY = ((m_height * 0.3f) / static_cast<float>(texSize.y)) * coefficient;
-        platformSprite->setScale(scaleX, scaleY);
+        float targetWidth = m_width;
+        float targetHeight = m_height * 0.3f;
+
+        float scaleX = targetWidth / static_cast<float>(texSize.x);
+        float scaleY = targetHeight / static_cast<float>(texSize.y);
+
+        float scale = std::min(scaleX, scaleY);
+        platformSprite->setScale(scale, scale);
+
+        /*platformSprite->setScale({ scaleX, scaleY });*/
 
         platformSprite->setOrigin(texSize.x / 2.f, texSize.y);
         platformSprite->setPosition(m_width / 2.f, m_height - 10.f);
@@ -447,10 +454,35 @@ void Level::setBackground(sf::Texture* texture) {
 
         float scaleX = m_width / static_cast<float>(texSize.x);
         float scaleY = m_height / static_cast<float>(texSize.y);
-        m_background->setScale({ scaleX, scaleY });
+
+        float scale = std::max(scaleX, scaleY);
+        m_background->setScale({ scale, scale });
+
+        /*m_background->setScale({ scaleX, scaleY });*/
         m_background->setCameraPosition({ m_width / 2.f, m_height / 2.f });
     }
 }
 
 void Level::addParallaxLayer(sf::Sprite* sprite, const sf::Vector2f& parallaxFactor) {
 }
+
+
+//void Level::adjustViewport(sf::View& view, sf::RenderWindow& window) {
+//    float levelAspectRatio = m_width / m_height;
+//    float windowAspectRatio = window.getSize().x / static_cast<float>(window.getSize().y);
+//
+//    if (windowAspectRatio > levelAspectRatio)
+//    {
+//        float viewHeight = m_height;
+//        float viewWidth = viewHeight * windowAspectRatio;
+//        view.setSize(viewWidth, viewHeight);
+//    }
+//    else 
+//    {
+//        float viewWidth = m_width;
+//        float viewHeight = viewWidth / windowAspectRatio;
+//        view.setSize(viewWidth, viewHeight);
+//    }
+//
+//    view.setCenter(m_width / 2.f, m_height / 2.f);
+//}

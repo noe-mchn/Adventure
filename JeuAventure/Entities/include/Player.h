@@ -74,31 +74,24 @@ private:
     void playAnimation(const std::string& name);
 
     std::unordered_map<PlayerAction, bool> m_actions;
-
-    // Rectangle simple pour représenter le joueur
     sf::RectangleShape m_playerRect;
 
-    // Variables pour le système de pièces/score
     int m_coins;
     int m_score;
     int m_lives;
 
-    // Variables pour le dash
     float m_dashCooldown;
     float m_dashTimer;
     bool m_canDash;
 
-    // Variables pour l'attaque
     float m_attackCooldown;
     float m_attackTimer;
     bool m_canAttack;
 
-    // Variables pour les capacités
     bool m_hasDash;
     bool m_hasDoubleJump;
     bool m_hasWallJump;
 
-    // Variables pour le système de saut
     int m_jumpsRemaining;
     int m_maxJumps;
     bool m_isOnWall;
@@ -107,15 +100,11 @@ private:
     sf::Vector2f m_wallNormal;
     float m_wallJumpForce;
 
-    // Variables pour le coyote time
     float m_coyoteTime;
     float m_coyoteTimer;
 
-    // Variables pour le jump buffer
     float m_jumpBufferTime;
     float m_jumpBufferTimer;
     bool m_jumpBuffered;
-
-    // Animation actuelle (nom uniquement pour compatibilité)
     std::string m_currentAnimation;
 };

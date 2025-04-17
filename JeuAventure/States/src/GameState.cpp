@@ -120,7 +120,7 @@ void GameState::update(float dt) {
 }
 
 void GameState::render(sf::RenderWindow& window) {
-    //window.setView(*m_gameView);
+    /*window.setView(*m_gameView);*/
 
     if (m_level) {
         m_level->render(window);
@@ -210,24 +210,28 @@ void GameState::pauseGame() {
     }
 }
 
-void GameState::gameOver() {
+void GameState::gameOver()
+{
     if (m_gameOver) return;
 
     m_gameOver = true;
     std::cout << "Game over" << std::endl;
 
     sf::Clock delay;
-    while (delay.getElapsedTime().asSeconds() < 2.0f) {
+    while (delay.getElapsedTime().asSeconds() < 2.0f) 
+    {
         sf::sleep(sf::milliseconds(100));
     }
 
     m_game.getStateManager().pushState(StateType::GameOver);
 }
 
-void GameState::resume() {
+void GameState::resume()
+{
     m_isPaused = false;
 }
 
-void GameState::pause() {
+void GameState::pause()
+{
     m_isPaused = true;
 }

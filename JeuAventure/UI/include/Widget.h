@@ -368,4 +368,36 @@ public:
 
     void setOnSelectionChangedCallback(const std::function<void(int, const std::string&)>& callback);
 };
-
+//
+//
+//class DialogueBox : public UIElement
+//{
+//public:
+//    DialogueBox(const sf::Font& font, const sf::Vector2f& position, const sf::Vector2f& size);
+//
+//    void setDialogueLines(const std::vector<std::string>& lines);
+//    void setOnDialogueEndCallback(const std::function<void()>& callback);
+//
+//    void update(float dt) override;
+//    void render(sf::RenderTarget& target) override;
+//    bool handleEvent(const sf::Event& event) override;
+//
+//private:
+//    void nextLine();
+//    void updateTypewriter(float dt);
+//
+//    Panel m_background;
+//    Label m_textLabel;
+//    Button m_nextButton;
+//
+//    std::vector<std::string> m_lines;
+//    int m_currentLine;
+//
+//    std::function<void()> m_onDialogueEnd;
+//
+//    float m_typewriterSpeed = 0.03f;
+//    float m_elapsedTime = 0.f;
+//    std::string m_fullText;
+//    std::string m_displayedText;
+//    bool m_textFullyDisplayed = false;
+//};
