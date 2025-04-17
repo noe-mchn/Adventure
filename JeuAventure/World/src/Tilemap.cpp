@@ -309,6 +309,19 @@ void Tilemap::render(sf::RenderWindow& window) {
         sf::RenderStates states;
         states.texture = m_tilesetTexture;
         window.draw(visibleVertices, states);
+
+        sf::RectangleShape collisionTile;
+        collisionTile.setSize(sf::Vector2f(m_tileWidth, m_tileHeight));
+        collisionTile.setFillColor(sf::Color(255, 0, 0, 100));
+
+        for (int y = 0; y < m_height; y++) {
+            for (int x = 0; x < m_width; x++) {
+                if (isTileCollidable(x, y)) {
+                    collisionTile.setPosition(x * m_tileWidth, y * m_tileHeight);
+                    window.draw(collisionTile);
+                }
+            }
+        }
     }
 }
 

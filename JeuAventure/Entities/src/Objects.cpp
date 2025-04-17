@@ -124,7 +124,7 @@ Pickup::Pickup(const std::string& type, int value)
     m_bobTime(0.0f)
 {
     m_name = type + "_pickup";
-    m_size = sf::Vector2f(24.0f, 24.0f);
+    m_size = sf::Vector2f(0.05f, 0.05f);
 
     if (type == "coin") {
         m_color = sf::Color::Yellow;
@@ -160,10 +160,11 @@ void Pickup::initialize() {
     RessourceManager* resourceManager = RessourceManager::getInstance();
     std::string textureKey = "pickup_" + m_pickupType;
 
-    if (resourceManager->loadTexture(textureKey, "Assets/Textures/" + textureKey + ".png")) {
+    if (resourceManager->loadTexture(textureKey, textureKey + ".png")) {
         m_texture = std::make_unique<sf::Texture>(*resourceManager->getTexture(textureKey));
         m_sprite.setTexture(*m_texture);
         m_sprite.setOrigin(m_texture->getSize().x / 2.0f, m_texture->getSize().y / 2.0f);
+        m_sprite.setScale(0.05f, 0.05f);
     }
 }
 
@@ -298,7 +299,7 @@ void Platform::initialize() {
         textureKey = "platform_falling";
     }
 
-    if (resourceManager->loadTexture(textureKey, "Assets/Textures/" + textureKey + ".png")) {
+    if (resourceManager->loadTexture(textureKey, "Ressources/" + textureKey + ".png")) {
         m_texture = std::make_unique<sf::Texture>(*resourceManager->getTexture(textureKey));
         m_sprite.setTexture(*m_texture);
         m_sprite.setOrigin(m_texture->getSize().x / 2.0f, m_texture->getSize().y / 2.0f);

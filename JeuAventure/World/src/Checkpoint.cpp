@@ -15,7 +15,7 @@ Checkpoint::Checkpoint()
     m_pulseAmplitude(0.2f),
     m_showRadius(false) {
     m_name = "Checkpoint";
-    m_size = sf::Vector2f(32.0f, 32.0f);
+    m_size = sf::Vector2f(2.0f, 2.0f);
     m_radiusVisual.setRadius(m_activationRadius);
     m_radiusVisual.setFillColor(sf::Color(0, 200, 255, 40));
     m_radiusVisual.setOutlineColor(sf::Color(0, 150, 255));
@@ -33,7 +33,7 @@ Checkpoint::Checkpoint(const sf::Vector2f& position, float radius)
     m_pulseAmplitude(0.2f),
     m_showRadius(false) {
     m_name = "Checkpoint";
-    m_size = sf::Vector2f(32.0f, 32.0f);
+    m_size = sf::Vector2f(2.0f, 2.0f);
     setPosition(position);
     m_radiusVisual.setRadius(m_activationRadius);
     m_radiusVisual.setFillColor(sf::Color(0, 200, 255, 40));
@@ -45,11 +45,12 @@ Checkpoint::Checkpoint(const sf::Vector2f& position, float radius)
 void Checkpoint::initialize() {
     Entity::initialize();
     RessourceManager* resourceManager = RessourceManager::getInstance();
-    if (resourceManager->loadTexture("checkpoint", "Assets/Textures/checkpoint.png")) {
+    if (resourceManager->loadTexture("checkpoint", "checkpoint.png")) {
         m_texture = std::make_unique<sf::Texture>(*resourceManager->getTexture("checkpoint"));
         m_sprite.setTexture(*m_texture);
         sf::Vector2u textureSize = m_texture->getSize();
         m_sprite.setOrigin(textureSize.x / 2.0f, textureSize.y / 2.0f);
+        m_sprite.setScale(0.05f, 0.05f);
     }
     if (m_collider) {
         m_collider->setIsTrigger(true);
@@ -70,11 +71,6 @@ void Checkpoint::update(float dt) {
         float scale = 1.0f + std::sin(m_animationTimer * m_pulseFrequency) * (m_pulseAmplitude / 2);
         m_sprite.setScale(scale, scale);
         m_sprite.setColor(sf::Color(180, 180, 255));
-    }
-    else {
-        float scale = 1.0f + std::sin(m_animationTimer * m_pulseFrequency / 2) * (m_pulseAmplitude / 3);
-        m_sprite.setScale(scale, scale);
-        m_sprite.setColor(sf::Color(150, 150, 150));
     }
     if (m_showRadius) {
         float radiusScale = 1.0f + std::sin(m_animationTimer * 1.5f) * 0.1f;

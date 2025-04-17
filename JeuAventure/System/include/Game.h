@@ -74,6 +74,8 @@ public:
     unsigned int getTargetFPS() const;
     float getFPS() const;
     void updateFPS();
+
+    bool isFullscreen() const;
 };
 
 //#pragma once

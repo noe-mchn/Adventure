@@ -3,6 +3,7 @@
 #include "InputManager.h"
 #include "EventSystem.h"
 #include "RessourceManager.h"
+#include "Animation.h"
 #include <iostream>
 
 Player::Player()
@@ -35,9 +36,15 @@ Player::Player()
     m_name = "Player";
     m_speed = 250.0f;
     m_jumpForce = 500.0f;
-    m_size = sf::Vector2f(32.0f, 64.0f);
+    m_size = sf::Vector2f(10.0f, 10.0f);
     m_health = 100;
     m_maxHealth = 100;
+
+    m_playerRect.setSize(m_size);
+    m_playerRect.setOrigin(m_size.x / 2.0f, m_size.y / 2.0f);
+    m_playerRect.setFillColor(sf::Color(50, 150, 250));
+    m_playerRect.setOutlineThickness(2.0f);
+    m_playerRect.setOutlineColor(sf::Color::White);
 
     m_actions[PlayerAction::MoveLeft] = false;
     m_actions[PlayerAction::MoveRight] = false;
@@ -47,6 +54,7 @@ Player::Player()
     m_actions[PlayerAction::Special] = false;
     m_actions[PlayerAction::Interact] = false;
 }
+
 
 void Player::initialize() {
     Entity::initialize();
@@ -64,7 +72,6 @@ void Player::initialize() {
         m_physicsBody->setProperties(props);
     }
 
-    loadAnimations();
     resetJumps();
 }
 
@@ -103,9 +110,33 @@ void Player::update(float dt) {
             m_jumpBuffered = false;
         }
     }
+    updatePlayerVisuals();
 
-    updateAnimationState();
     Entity::update(dt);
+}
+
+
+void Player::render(sf::RenderWindow& window) {
+    m_playerRect.setPosition(m_position);
+
+    window.draw(m_playerRect);
+
+    if (m_facingRight) {
+        sf::RectangleShape dirMarker;
+        dirMarker.setSize(sf::Vector2f(10, 10));
+        dirMarker.setOrigin(0, 5);
+        dirMarker.setPosition(m_position.x + m_size.x / 2 - 5, m_position.y);
+        dirMarker.setFillColor(sf::Color::White);
+        window.draw(dirMarker);
+    }
+    else {
+        sf::RectangleShape dirMarker;
+        dirMarker.setSize(sf::Vector2f(10, 10));
+        dirMarker.setOrigin(10, 5);
+        dirMarker.setPosition(m_position.x - m_size.x / 2 + 5, m_position.y);
+        dirMarker.setFillColor(sf::Color::White);
+        window.draw(dirMarker);
+    }
 }
 
 void Player::handleEvents(const sf::Event& event) {
@@ -315,7 +346,7 @@ void Player::addCoins(int amount) {
     m_coins += amount;
     EventSystem::getInstance()->triggerEvent("PlayerCoinsChanged", {
         {"player", this},
-        {"coins", m_coins}
+        {"Bitcoin", m_coins}
         });
 }
 
@@ -381,7 +412,7 @@ void Player::onCollisionEnter(Collider* other) {
     }
 
     if (otherEntity->getType() == EntityType::Pickup) {
-        if (otherEntity->getName() == "Coin") {
+        if (otherEntity->getName() == "Bitcoin") {
             addCoins(1);
             addScore(100);
             playSound("coin_pickup", 1.0f);
@@ -541,43 +572,56 @@ void Player::applyGravity(float dt) {
 void Player::updateAnimationState() {
     switch (m_state) {
     case EntityState::Idle:
-        playAnimation("idle");
         break;
     case EntityState::Walking:
-        playAnimation("walk");
         break;
     case EntityState::Running:
-        playAnimation("run");
         break;
     case EntityState::Jumping:
-        playAnimation("jump");
         break;
     case EntityState::Falling:
-        playAnimation("fall");
         break;
     case EntityState::Dashing:
-        playAnimation("dash");
         break;
     case EntityState::Attacking:
-        if (m_currentAnimation != "attack") {
-            playAnimation("attack");
-        }
         break;
     case EntityState::Hit:
-        playAnimation("hit");
         break;
     case EntityState::Dead:
-        playAnimation("death");
         break;
     }
 }
 
 void Player::loadAnimations() {
-    RessourceManager* resourceManager = RessourceManager::getInstance();
+}
+	
+void Player::playAnimation(const std::string& name) {
+}
 
-    if (resourceManager->loadTexture("player_idle", "Assets/Textures/player_idle.png")) {
-        m_texture = std::make_unique<sf::Texture>(*resourceManager->getTexture("player_idle"));
-        m_sprite.setTexture(*m_texture);
-        m_sprite.setOrigin(m_texture->getSize().x / 2.0f, m_texture->getSize().y / 2.0f);
+void Player::updatePlayerVisuals() {
+    switch (m_state) {
+    case EntityState::Idle:
+        m_playerRect.setFillColor(sf::Color(50, 150, 250));
+        break;
+    case EntityState::Walking:
+    case EntityState::Running:
+        m_playerRect.setFillColor(sf::Color(100, 180, 250));
+        break;
+    case EntityState::Jumping:
+    case EntityState::Falling:
+        m_playerRect.setFillColor(sf::Color(50, 100, 220));
+        break;
+    case EntityState::Dashing:
+        m_playerRect.setFillColor(sf::Color(220, 220, 100));
+        break;
+    case EntityState::Attacking:
+        m_playerRect.setFillColor(sf::Color(220, 100, 100));
+        break;
+    case EntityState::Hit:
+        m_playerRect.setFillColor(sf::Color(250, 50, 50));
+        break;
+    case EntityState::Dead:
+        m_playerRect.setFillColor(sf::Color(100, 100, 100));
+        break;
     }
 }

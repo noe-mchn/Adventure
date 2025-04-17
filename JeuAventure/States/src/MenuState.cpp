@@ -19,10 +19,10 @@ MenuState::MenuState(Game& game)
 void MenuState::initialize() {
     auto* resourceManager = RessourceManager::getInstance();
 
-    if (!resourceManager->loadFont("main_font", "Assets/Fonts/pixeloid.ttf")) {
+    if (!resourceManager->loadFont("main_font", "arial.ttf")) {
         std::cerr << "Failed to load main font!" << std::endl;
         m_font = sf::Font();
-        if (!m_font.loadFromFile("Assets/Fonts/pixeloid.ttf")) {
+        if (!m_font.loadFromFile("arial.ttf")) {
             std::cerr << "Failed to load fallback font!" << std::endl;
         }
     }
@@ -30,7 +30,7 @@ void MenuState::initialize() {
         m_font = *resourceManager->getFont("main_font");
     }
 
-    if (resourceManager->loadTexture("menu_background", "Assets/Textures/menu_background.png")) {
+    if (resourceManager->loadTexture("menu_background", "Menu.png")) {
         m_backgroundSprite.setTexture(*resourceManager->getTexture("menu_background"));
 
         float scaleX = static_cast<float>(m_game.getWindow().getSize().x) / m_backgroundSprite.getTexture()->getSize().x;

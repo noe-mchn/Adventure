@@ -25,7 +25,7 @@ enum class UIScaleMode {
     ScaleWithScreen
 };
 
-class UIElements {
+class UIElement {
 protected:
     std::string m_id;
     bool m_visible;
@@ -37,8 +37,8 @@ protected:
     sf::Vector2f m_scale;
     float m_rotation;
 
-    UIElements* m_parent;
-    std::vector<std::unique_ptr<UIElements>> m_children;
+    UIElement* m_parent;
+    std::vector<std::unique_ptr<UIElement>> m_children;
 
     UIAnchor m_anchor;
     UIScaleMode m_scaleMode;
@@ -49,25 +49,24 @@ protected:
 
     float m_animationSpeed;
 
-    std::function<void(UIElements*)> m_onClickCallback;
-    std::function<void(UIElements*)> m_onHoverCallback;
-    std::function<void(UIElements*, bool)> m_onFocusCallback;
+    std::function<void(UIElement*)> m_onClickCallback;
+    std::function<void(UIElement*)> m_onHoverCallback;
+    std::function<void(UIElement*, bool)> m_onFocusCallback;
 
-    virtual void recalculatePosition();
     void updateChildrenPositions();
 
 public:
-    UIElements();
-    UIElements(const std::string& id, const sf::Vector2f& position, const sf::Vector2f& size);
-    virtual ~UIElements();
+    UIElement();
+    UIElement(const std::string& id, const sf::Vector2f& position, const sf::Vector2f& size);
+    virtual ~UIElement();
 
     virtual void update(float dt);
     virtual void render(sf::RenderTarget& target);
 
     virtual bool handleEvent(const sf::Event& event);
 
-    virtual void addChild(std::unique_ptr<UIElements> child);
-    virtual UIElements* getChild(const std::string& id);
+    virtual void addChild(std::unique_ptr<UIElement> child);
+    virtual UIElement* getChild(const std::string& id);
     virtual void removeChild(const std::string& id);
     virtual void clearChildren();
 
@@ -111,12 +110,12 @@ public:
     virtual void setID(const std::string& id);
     virtual const std::string& getID() const;
 
-    virtual void setParent(UIElements* parent);
-    virtual UIElements* getParent() const;
+    virtual void setParent(UIElement* parent);
+    virtual UIElement* getParent() const;
 
-    virtual void setOnClickCallback(const std::function<void(UIElements*)>& callback);
-    virtual void setOnHoverCallback(const std::function<void(UIElements*)>& callback);
-    virtual void setOnFocusCallback(const std::function<void(UIElements*, bool)>& callback);
+    virtual void setOnClickCallback(const std::function<void(UIElement*)>& callback);
+    virtual void setOnHoverCallback(const std::function<void(UIElement*)>& callback);
+    virtual void setOnFocusCallback(const std::function<void(UIElement*, bool)>& callback);
 
     virtual void focus();
     virtual void unfocus();
@@ -124,4 +123,6 @@ public:
     virtual void hover(bool isHovering);
 
     virtual bool containsPoint(const sf::Vector2f& point) const;
+
+    virtual void recalculatePosition();
 };

@@ -1,8 +1,8 @@
 #pragma once
 
 #include "Entity.h"
-#include <map>
-#include <string>
+#include <unordered_map>
+#include <SFML/Graphics.hpp>
 
 enum class PlayerAction {
     MoveLeft,
@@ -15,44 +15,14 @@ enum class PlayerAction {
 };
 
 class Player : public Entity {
-private:
-    int m_coins;
-    int m_score;
-    int m_lives;
-    float m_dashCooldown;
-    float m_dashTimer;
-    bool m_canDash;
-    float m_attackCooldown;
-    float m_attackTimer;
-    bool m_canAttack;
-
-    bool m_hasDash;
-    bool m_hasDoubleJump;
-    bool m_hasWallJump;
-    int m_jumpsRemaining;
-    int m_maxJumps;
-
-    bool m_isOnWall;
-    bool m_isWallSliding;
-    float m_wallSlideSpeed;
-    sf::Vector2f m_wallNormal;
-    float m_wallJumpForce;
-
-    float m_coyoteTime;
-    float m_coyoteTimer;
-
-    float m_jumpBufferTime;
-    float m_jumpBufferTimer;
-    bool m_jumpBuffered;
-
-    std::map<PlayerAction, bool> m_actions;
-
 public:
     Player();
+    virtual ~Player() = default;
 
-    void update(float dt) override;
-    void handleEvents(const sf::Event& event) override;
     void initialize() override;
+    void update(float dt) override;
+    void render(sf::RenderWindow& window) override;
+    void handleEvents(const sf::Event& event) override;
 
     void move(float x, float y);
     void jump();
@@ -96,9 +66,56 @@ private:
     void updateDash(float dt);
     void updateAttack(float dt);
     void updateWallSlide(float dt);
+    void updateAnimationState();
+    void updatePlayerVisuals();
     void checkGrounded();
     void applyGravity(float dt);
-
-    void updateAnimationState();
     void loadAnimations();
+    void playAnimation(const std::string& name);
+
+    std::unordered_map<PlayerAction, bool> m_actions;
+
+    // Rectangle simple pour représenter le joueur
+    sf::RectangleShape m_playerRect;
+
+    // Variables pour le système de pièces/score
+    int m_coins;
+    int m_score;
+    int m_lives;
+
+    // Variables pour le dash
+    float m_dashCooldown;
+    float m_dashTimer;
+    bool m_canDash;
+
+    // Variables pour l'attaque
+    float m_attackCooldown;
+    float m_attackTimer;
+    bool m_canAttack;
+
+    // Variables pour les capacités
+    bool m_hasDash;
+    bool m_hasDoubleJump;
+    bool m_hasWallJump;
+
+    // Variables pour le système de saut
+    int m_jumpsRemaining;
+    int m_maxJumps;
+    bool m_isOnWall;
+    bool m_isWallSliding;
+    float m_wallSlideSpeed;
+    sf::Vector2f m_wallNormal;
+    float m_wallJumpForce;
+
+    // Variables pour le coyote time
+    float m_coyoteTime;
+    float m_coyoteTimer;
+
+    // Variables pour le jump buffer
+    float m_jumpBufferTime;
+    float m_jumpBufferTimer;
+    bool m_jumpBuffered;
+
+    // Animation actuelle (nom uniquement pour compatibilité)
+    std::string m_currentAnimation;
 };

@@ -19,13 +19,13 @@ private:
 
     std::unique_ptr<DialogSystem> m_dialogSystem;
 
-    std::map<std::string, std::unique_ptr<UIElements>> m_uiElements;
+    std::map<std::string, std::unique_ptr<UIElement>> m_uiElements;
 
     std::stack<Menu*> m_menuStack;
 
-    UIElements* m_focusedElement;
+    UIElement* m_focusedElement;
 
-    UIElements* m_hoveredElement;
+    UIElement* m_hoveredElement;
 
     bool m_active;
     bool m_showHUD;
@@ -46,7 +46,7 @@ private:
 
     UIManager();
 
-    UIElements* findElementAt(const sf::Vector2f& position);
+    UIElement* findElementAt(const sf::Vector2f& position);
 
 public:
     static UIManager* getInstance();
@@ -64,8 +64,8 @@ public:
     void showHUD(bool show);
     bool isHUDVisible() const;
 
-    void addUIElement(std::unique_ptr<UIElements> element);
-    UIElements* getUIElement(const std::string& id);
+    void addUIElement(std::unique_ptr<UIElement> element);
+    UIElement* getUIElement(const std::string& id);
     void removeUIElement(const std::string& id);
     void clearUIElements();
 
@@ -83,12 +83,12 @@ public:
     void startTransition(const std::string& type, float duration, const std::function<void()>& callback);
     bool isInTransition() const;
 
-    void setFocus(UIElements* element);
-    UIElements* getFocusedElement() const;
+    void setFocus(UIElement* element);
+    UIElement* getFocusedElement() const;
     void clearFocus();
 
-    void setHovered(UIElements* element);
-    UIElements* getHoveredElement() const;
+    void setHovered(UIElement* element);
+    UIElement* getHoveredElement() const;
     void clearHovered();
 
     void setActive(bool active);

@@ -19,7 +19,7 @@ private:
 
 public:
     Checkpoint();
-    Checkpoint(const sf::Vector2f& position, float radius = 50.0f);
+    Checkpoint(const sf::Vector2f& position, float radius = 2.0f);
 
     void initialize() override;
     void update(float dt) override;

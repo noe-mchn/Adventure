@@ -23,7 +23,7 @@ enum class HUDElement {
     Custom
 };
 
-class HUD : public UIElements {
+class HUD : public UIElement {
 private:
     std::unique_ptr<ProgressBar> m_healthBar;
     std::unique_ptr<ProgressBar> m_manaBar;
@@ -39,7 +39,7 @@ private:
     std::unique_ptr<Label> m_comboCounter;
     std::unique_ptr<Label> m_timer;
 
-    std::map<std::string, std::unique_ptr<UIElements>> m_customElements;
+    std::map<std::string, std::unique_ptr<UIElement>> m_customElements;
 
     std::map<HUDElement, bool> m_elementVisibility;
 
@@ -83,9 +83,9 @@ public:
     void setCombo(int combo);
     void setTimer(float seconds);
 
-    UIElements* addCustomElement(const std::string& id, std::unique_ptr<UIElements> element);
+    UIElement* addCustomElement(const std::string& id, std::unique_ptr<UIElement> element);
     void removeCustomElement(const std::string& id);
-    UIElements* getCustomElement(const std::string& id);
+    UIElement* getCustomElement(const std::string& id);
 
     void showElement(HUDElement element, bool show);
     bool isElementVisible(HUDElement element) const;

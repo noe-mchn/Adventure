@@ -3,51 +3,44 @@
 #include "State.h"
 #include <SFML/Graphics.hpp>
 #include <memory>
-#include <vector>
 
 class Player;
-class Enemy;
 class Level;
-namespace sf {
-    class View;
-}
+class Game;
 
 class GameState : public State {
-private:
-    std::unique_ptr<sf::View> m_gameView;
-    std::unique_ptr<Player> m_player;
-    std::vector<std::unique_ptr<Enemy>> m_enemies;
-    std::unique_ptr<Level> m_level;
-
-    bool m_showDebugInfo;
-    sf::Text m_debugText;
-    sf::Font m_debugFont;
-
-    sf::RectangleShape m_healthBar;
-    sf::RectangleShape m_healthBarBackground;
-    sf::Text m_scoreText;
-
-    int m_score;
-    int m_currentLevel;
-    bool m_gameOver;
-
-    void updateCamera();
-    void loadLevel(int levelIndex);
-    void updateHUD();
-    void respawnPlayer();
-    void spawnEnemy(float x, float y, const std::string& type);
-    void checkCollisions();
-
 public:
     GameState(Game& game);
-    virtual ~GameState() = default;
+    ~GameState();
 
     void initialize() override;
     void handleEvent(const sf::Event& event) override;
     void update(float dt) override;
     void render(sf::RenderWindow& window) override;
 
-    void resetGame();
+    void pause();
+    void resume();
+
+private:
+    void resetLevel();
+    void updateCamera();
+    void updateHUD();
     void pauseGame();
     void gameOver();
+
+    std::unique_ptr<sf::View> m_gameView;
+    std::unique_ptr<Player> m_player;
+    std::unique_ptr<Level> m_level;
+
+    sf::Font m_debugFont;
+    sf::Text m_debugText;
+    sf::Text m_scoreText;
+
+    sf::RectangleShape m_healthBarBackground;
+    sf::RectangleShape m_healthBar;
+
+    bool m_showDebugInfo;
+    int m_score;
+    bool m_gameOver;
+    bool m_isPaused;
 };

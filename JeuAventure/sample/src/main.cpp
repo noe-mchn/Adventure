@@ -1,8 +1,82 @@
-#include <SFML/Graphics.hpp>
-#include <vector>
-#include <iostream>
-#include <random>
+#include "Application.h"
 #include "Game.h"
+#include "StateManager.h"
+#include "MenuState.h"
+#include "GameState.h"
+#include "PauseState.h"
+#include "GameOverState.h"
+#include "RessourceManager.h"
+#include "EventSystem.h"
+#include "InputManager.h"
+#include <iostream>
+
+int main(int argc, char** argv) {
+    try {
+        std::cout << "Starting Platformer Game..." << std::endl;
+
+        Application* app = Application::getInstance();
+
+        app->initialize(argc, argv);
+
+        StateManager* stateManager = app->getStateManager();
+
+        stateManager->registerState<MenuState>(StateType::Menu);
+        stateManager->registerState<GameState>(StateType::Game);
+        stateManager->registerState<PauseState>(StateType::Pause);
+        stateManager->registerState<GameOverState>(StateType::GameOver);
+
+        stateManager->pushState(StateType::Menu);
+
+        EventSystem* eventSystem = app->getEventSystem();
+
+        eventSystem->addEventListener("GameCompleted", [](const std::map<std::string, std::any>& params) {
+            std::cout << "Game completed! Showing end screen." << std::endl;
+            });
+
+        eventSystem->addEventListener("FatalError", [app](const std::map<std::string, std::any>& params) {
+            std::string errorMessage = "Unknown error";
+            if (params.count("message")) {
+                errorMessage = std::any_cast<std::string>(params.at("message"));
+            }
+            std::cerr << "FATAL ERROR: " << errorMessage << std::endl;
+            app->quit(1);
+            });
+
+        RessourceManager* resources = app->getRessourceManager();
+        resources->loadFont("default", "arial.ttf");
+        resources->loadFont("title", "arial.ttf");
+
+        InputManager* input = app->getInputManager();
+        input->bindKey(InputAction::JUMP, sf::Keyboard::W);
+        input->bindKey(InputAction::JUMP, sf::Keyboard::Up);
+        input->bindKey(InputAction::JUMP, sf::Keyboard::Space);
+
+        input->bindKey(InputAction::MOVE_LEFT, sf::Keyboard::A);
+        input->bindKey(InputAction::MOVE_LEFT, sf::Keyboard::Left);
+
+        input->bindKey(InputAction::MOVE_RIGHT, sf::Keyboard::D);
+        input->bindKey(InputAction::MOVE_RIGHT, sf::Keyboard::Right);
+
+        input->bindKey(InputAction::INTERACT, sf::Keyboard::E);
+        input->bindKey(InputAction::DASH, sf::Keyboard::LShift);
+        input->bindKey(InputAction::ATTACK, sf::Keyboard::LControl);
+
+        input->bindKey(InputAction::PAUSE, sf::Keyboard::Escape);
+
+        int exitCode = app->run();
+
+        return exitCode;
+    }
+    catch (const std::exception& e) {
+        std::cerr << "UNHANDLED EXCEPTION: " << e.what() << std::endl;
+        return 1;
+    }
+    catch (...) {
+        std::cerr << "UNKNOWN EXCEPTION OCCURRED" << std::endl;
+        return 1;
+    }
+}
+
 
 //const int WINDOW_WIDTH = 800;
 //const int WINDOW_HEIGHT = 800;

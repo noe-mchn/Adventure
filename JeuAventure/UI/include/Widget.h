@@ -6,7 +6,7 @@
 #include <functional>
 #include <memory>
 
-class Button : public UIElements {
+class Button : public UIElement {
 private:
     sf::Text m_text;
     sf::RectangleShape m_shape;
@@ -52,7 +52,7 @@ public:
     bool isHovered() const;
 };
 
-class Label : public UIElements {
+class Label : public UIElement {
 private:
     sf::Text m_text;
     bool m_autoResize;
@@ -82,7 +82,7 @@ public:
     sf::Text::Style getAlignment() const;
 };
 
-class Image : public UIElements {
+class Image : public UIElement {
 private:
     sf::Sprite m_sprite;
     sf::Texture* m_texture;
@@ -101,7 +101,7 @@ public:
     sf::IntRect getTextureRect() const;
 };
 
-class ProgressBar : public UIElements {
+class ProgressBar : public UIElement {
 private:
     sf::RectangleShape m_background;
     sf::RectangleShape m_fillBar;
@@ -152,7 +152,7 @@ public:
     void setFont(const sf::Font& font);
 };
 
-class Panel : public UIElements {
+class Panel : public UIElement {
 private:
     sf::RectangleShape m_background;
     bool m_drawBackground;
@@ -184,7 +184,7 @@ public:
     sf::Color getBorderColor() const;
 };
 
-class TextBox : public UIElements {
+class TextBox : public UIElement {
 private:
     sf::RectangleShape m_background;
     sf::Text m_text;
@@ -260,7 +260,7 @@ public:
     void setOnEnterCallback(const std::function<void()>& callback);
 };
 
-class CheckBox : public UIElements {
+class CheckBox : public UIElement {
 private:
     sf::RectangleShape m_box;
     sf::RectangleShape m_checkMark;
@@ -304,7 +304,7 @@ public:
     void setOnCheckedChangedCallback(const std::function<void(bool)>& callback);
 };
 
-class Dropdown : public UIElements {
+class Dropdown : public UIElement {
 private:
     struct DropdownItem {
         std::string text;

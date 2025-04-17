@@ -27,6 +27,9 @@ private:
 
     std::unique_ptr<Background> m_background;
 
+    std::vector<std::unique_ptr<sf::Sprite>> m_layers;
+    sf::Vector2f m_scale;
+
     std::vector<Entity*> m_entities;
 
     sf::Vector2f m_playerStartPosition;
@@ -110,4 +113,14 @@ public:
     std::vector<Entity*> getEntitiesInArea(const sf::FloatRect& area);
 
     void handleEvent(const sf::Event& event);
+
+    void addPlatformLayer(sf::Texture* texture);
+
+    void addTileLayer(std::unique_ptr<sf::Sprite> layer);
+
+    // Ajout d'une couche de parallaxe
+    void addParallaxLayer(sf::Sprite* sprite, const sf::Vector2f& parallaxFactor);
+
+    // Définir une texture comme fond (alternative à setBackground)
+    void setBackground(sf::Texture* texture);
 };

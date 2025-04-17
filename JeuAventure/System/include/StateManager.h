@@ -61,7 +61,7 @@ public:
 
 template <typename T>
 void StateManager::registerState(StateType stateType) {
-    m_factories[stateType] = [](Game& game) {
+    m_factories[stateType] = [](Game& game) -> std::unique_ptr<State> {
         return std::make_unique<T>(game);
         };
 }

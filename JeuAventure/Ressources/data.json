@@ -12,7 +12,7 @@
 			"dir": "e"
 		}
 	],
-	"customFields" : {},
+	"customFields": {},
 	"layers": [
 		"Back.png",
 		"Mid.png",
@@ -23,5 +23,5 @@
 		"TileSet2.png",
 		"Props2.png"
 	],
-	"entities" : {}
+	"entities": {}
 }

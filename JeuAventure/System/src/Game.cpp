@@ -22,7 +22,6 @@ Game::Game() :
 }
 
 Game::~Game() {
-    RessourceManager::cleanup();
     InputManager::cleanup();
     EventSystem::cleanup();
     SaveSystem::cleanup();
@@ -134,10 +133,18 @@ void Game::update(float dt) {
 void Game::render() {
     m_window->clear(sf::Color(20, 20, 50));
 
-    m_stateManager->render(*m_window);
+    // Différencier le rendu selon l'état actif
+    if (m_stateManager->getActiveStateType() == StateType::Game) {
+        m_window->setView(m_window->getDefaultView());
+    }
+    else {
+        m_window->setView(m_window->getDefaultView());
+    }
 
+    m_stateManager->render(*m_window);
     m_window->display();
 }
+
 
 void Game::pause() {
     if (!m_isPaused && m_stateManager->getActiveStateType() == StateType::Game) {
@@ -240,6 +247,10 @@ void Game::updateFPS() {
         m_fpsFrameCount = 0;
         m_fpsClock.restart();
     }
+}
+
+bool Game::isFullscreen() const {
+    return m_isFullscreen;
 }
 
 //#include "Game.h"

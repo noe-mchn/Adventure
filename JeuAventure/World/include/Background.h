@@ -3,17 +3,13 @@
 #include <SFML/Graphics.hpp>
 #include <vector>
 #include <memory>
-
-struct ParallaxLayer {
-    sf::Sprite sprite;
-    float scrollSpeed;
-    bool repeat;
-    sf::Vector2f offset;
-};
+#include "Render.h"
 
 class Background {
 private:
     std::vector<ParallaxLayer> m_layers;
+
+    sf::Sprite m_sprite;
 
     std::vector<std::unique_ptr<sf::Texture>> m_textures;
 
@@ -40,6 +36,8 @@ public:
 
     void update(float dt);
     void render(sf::RenderWindow& window);
+
+    void setScale(const sf::Vector2f& scale);
 
     void setCameraPosition(const sf::Vector2f& position);
 };

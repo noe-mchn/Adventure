@@ -24,7 +24,7 @@ struct Dialog {
     std::function<void()> onComplete;
 };
 
-class DialogSystem : public UIElements {
+class DialogSystem : public UIElement {
 private:
     std::map<std::string, Dialog> m_dialogs;
     Dialog* m_activeDialog;

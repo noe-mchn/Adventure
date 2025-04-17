@@ -17,10 +17,10 @@ PauseState::PauseState(Game& game)
 void PauseState::initialize() {
     auto* resourceManager = RessourceManager::getInstance();
 
-    if (!resourceManager->loadFont("main_font", "Assets/Fonts/pixeloid.ttf")) {
+    if (!resourceManager->loadFont("main_font", "arial.ttf")) {
         std::cerr << "Failed to load main font!" << std::endl;
         m_font = sf::Font();
-        if (!m_font.loadFromFile("Assets/Fonts/pixeloid.ttf")) {
+        if (!m_font.loadFromFile("arial.ttf")) {
             std::cerr << "Failed to load fallback font!" << std::endl;
         }
     }

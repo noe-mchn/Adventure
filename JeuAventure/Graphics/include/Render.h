@@ -46,7 +46,6 @@ private:
 
     std::vector<Renderable> m_renderables;
 
-    std::vector<ParallaxLayer> m_parallaxLayers;
     sf::Vector2f m_parallaxOffset;
 
     sf::RenderTexture m_renderTexture;
@@ -98,11 +97,7 @@ public:
     void update(float deltaTime);
     void render();
 
-    void showDebugInfo(bool show);
-    bool isDebugInfoVisible() const;
-
-    int getDrawCalls() const;
-    int getVisibleEntities() const;
-
     Camera* getCamera() const;
+
+    std::vector<ParallaxLayer> m_parallaxLayers;
 };

@@ -14,7 +14,8 @@ enum class InputAction {
     PAUSE,
     MENU,
     CONFIRM,
-    CANCEL
+    CANCEL,
+    INTERACT
 };
 
 class InputManager {

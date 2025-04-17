@@ -45,7 +45,7 @@ public:
     void setSelected(bool selected);
 };
 
-class Menu : public UIElements {
+class Menu : public UIElement {
 private:
     MenuType m_type;
     std::string m_title;

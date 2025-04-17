@@ -1,59 +1,56 @@
 #pragma once
 
 #include <string>
+#include <map>
 #include <vector>
-#include <SFML/System/Vector2.hpp>
-#include <SFML/Graphics/Rect.hpp>
+#include <memory>
+#include <SFML/Graphics.hpp>
+#include <nlohmann/json.hpp>
 
 class Level;
-namespace nlohmann {
-    class json;
-}
+class Entity;
 
-struct TileData {
-    int id;
-    int x;
-    int y;
-    bool collidable;
-    std::string type;
-    std::vector<std::string> properties;
-};
-
-struct EntityData {
-    std::string type;
-    std::string name;
-    float x;
-    float y;
-    std::vector<std::pair<std::string, std::string>> properties;
-};
-
-struct LayerData {
-    std::string name;
-    std::vector<TileData> tiles;
-    std::vector<EntityData> entities;
-    bool visible;
-};
-
-struct LevelData {
-    int width;
-    int height;
-    int tileWidth;
-    int tileHeight;
-    std::string backgroundPath;
-    std::vector<LayerData> layers;
-    std::vector<std::pair<std::string, std::string>> properties;
-    std::string musicPath;
-};
+// Utilisation de nlohmann json pour le parsing
+using json = nlohmann::json;
 
 class LevelLoader {
 public:
-    static bool loadFromFile(const std::string& filename, Level* level);
-    static bool loadFromJson(const std::string& jsonString, Level* level);
+    // Charge un niveau à partir d'un fichier JSON LDtk
+    static bool loadLevel(const std::string& jsonFilePath, Level* level);
 
 private:
-    static LevelData parseJson(const nlohmann::json& jsonData);
-    static std::vector<TileData> parseTiles(const nlohmann::json& tilesJson);
-    static std::vector<EntityData> parseEntities(const nlohmann::json& entitiesJson);
-    static std::vector<std::pair<std::string, std::string>> parseProperties(const nlohmann::json& propertiesJson);
-    static void applyLevelData(Level* level, const LevelData& levelData);
+    // Structure pour stocker les informations d'une tuile
+    struct TileInfo {
+        int tileId;
+        int x, y;
+        bool flipped;
+        bool rotated;
+    };
+
+    // Charge les collisions depuis une IntGrid layer
+    static void loadCollisionsFromIntGrid(Level* level, const json& layerData, int gridSize);
+
+    // Charge une couche de tuiles
+    static void loadTileLayer(Level* level, const json& layerData, const json& project, const std::string& basePath);
+
+    // Charge les entités
+    static void loadEntities(Level* level, const json& layerData);
+
+    // Cherche le tileset par ID
+    static json findTileset(const json& project, int tilesetId);
+
+    // Charge une texture à partir d'un chemin relatif
+    static sf::Texture* loadTexture(const std::string& basePath, const std::string& relPath);
+
+    // Obient le chemin de base du fichier JSON
+    static std::string getBasePath(const std::string& jsonFilePath);
+
+    // Crée une entité basée sur son type
+    static Entity* createEntityByType(const std::string& type, const json& entityData);
+
+    // Décode les tuiles d'un layer (format de compression LDtk)
+    static std::vector<TileInfo> decodeTiles(const json& layerData, int gridSize);
+
+    // Obtient le niveau courant à partir du projet
+    static json getCurrentLevel(const json& project);
 };

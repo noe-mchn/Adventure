@@ -4,7 +4,7 @@
 
 Background::Background()
     : m_cameraPosition(0.0f, 0.0f),
-    m_size(800.0f, 600.0f),
+    m_size(2560, 1600),
     m_backgroundColor(sf::Color(40, 40, 60)),
     m_parallaxFactor(1.0f) {
 }
@@ -23,9 +23,7 @@ Background::~Background() {
 void Background::addLayer(const sf::Texture& texture, float scrollSpeed, bool repeat) {
     ParallaxLayer layer;
     layer.sprite.setTexture(texture);
-    layer.scrollSpeed = scrollSpeed;
     layer.repeat = repeat;
-    layer.offset = sf::Vector2f(0.0f, 0.0f);
 
     if (repeat) {
         const_cast<sf::Texture&>(texture).setRepeated(true);
@@ -77,50 +75,32 @@ void Background::setSize(const sf::Vector2f& size) {
     }
 }
 
+void Background::setScale(const sf::Vector2f& scale) {
+    for (auto& layer : m_layers) {
+        layer.sprite.setScale(scale);
+    }
+}
+
+
 void Background::update(float dt) {
 }
 
 void Background::render(sf::RenderWindow& window) {
+    // Dessiner un rectangle de couleur d'arrière-plan
     sf::RectangleShape background(sf::Vector2f(window.getView().getSize().x, window.getView().getSize().y));
     background.setFillColor(m_backgroundColor);
 
+    // Sauvegarder la vue actuelle, passer à la vue par défaut pour dessiner le rectangle, puis restaurer la vue
     sf::View originalView = window.getView();
     window.setView(window.getDefaultView());
     window.draw(background);
     window.setView(originalView);
 
-    for (auto& layer : m_layers) {
-        sf::Vector2f viewCenter = window.getView().getCenter();
-        sf::Vector2f parallaxOffset(
-            (viewCenter.x - m_size.x / 2) * layer.scrollSpeed * m_parallaxFactor,
-            (viewCenter.y - m_size.y / 2) * layer.scrollSpeed * m_parallaxFactor * 0.5f
-        );
 
-        if (layer.repeat) {
-            float viewWidth = window.getView().getSize().x;
-            float viewHeight = window.getView().getSize().y;
-
-            sf::Vector2f textureSize(layer.sprite.getTexture()->getSize());
-            float posX = viewCenter.x - viewWidth / 2 - std::fmod(parallaxOffset.x, textureSize.x);
-            float posY = viewCenter.y - viewHeight / 2 - std::fmod(parallaxOffset.y, textureSize.y);
-
-            layer.sprite.setPosition(posX, posY);
-
-            sf::IntRect textureRect = layer.sprite.getTextureRect();
-            textureRect.width = std::max(textureRect.width, static_cast<int>(viewWidth * 2));
-            textureRect.height = std::max(textureRect.height, static_cast<int>(viewHeight * 2));
-            layer.sprite.setTextureRect(textureRect);
-        }
-        else {
-            layer.sprite.setPosition(
-                viewCenter.x - layer.sprite.getTexture()->getSize().x / 2 - parallaxOffset.x,
-                viewCenter.y - layer.sprite.getTexture()->getSize().y / 2 - parallaxOffset.y
-            );
-        }
-
-        window.draw(layer.sprite);
-    }
+    // Optionnel : si vous souhaitez dessiner le sprite de base 'm_sprite' une seule fois, vous pouvez le faire ici :
+    // window.draw(m_sprite);
 }
+
 
 void Background::setCameraPosition(const sf::Vector2f& position) {
     m_cameraPosition = position;

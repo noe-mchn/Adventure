@@ -1,350 +1,375 @@
-//#include "LevelLoader.h"
-//#include "Level.h"
-//#include "Tilemap.h"
-//#include "RessourceManager.h"
-//#include "Player.h"
-//#include "Enemy.h"
-//#include "Objects.h"
-//#include <fstream>
-//#include <iostream>
-//#include <sstream>
-//#include <nlohmann/json.hpp>
-//
-//using json = nlohmann::json;
-//
-//bool LevelLoader::loadFromFile(const std::string& filename, Level* level) {
-//    if (!level) {
-//        std::cerr << "Error: Level pointer is null" << std::endl;
-//        return false;
-//    }
-//
-//    std::ifstream file(filename);
-//    if (!file.is_open()) {
-//        std::cerr << "Error: Could not open file: " << filename << std::endl;
-//        return false;
-//    }
-//
-//    try {
-//        json jsonData;
-//        file >> jsonData;
-//        file.close();
-//
-//        LevelData levelData = parseJson(jsonData);
-//        applyLevelData(level, levelData);
-//
-//        return true;
-//    }
-//    catch (const std::exception& e) {
-//        std::cerr << "Error parsing JSON file: " << e.what() << std::endl;
-//        return false;
-//    }
-//}
-//
-//bool LevelLoader::loadFromJson(const std::string& jsonString, Level* level) {
-//    if (!level) {
-//        std::cerr << "Error: Level pointer is null" << std::endl;
-//        return false;
-//    }
-//
-//    try {
-//        json jsonData = json::parse(jsonString);
-//        LevelData levelData = parseJson(jsonData);
-//        applyLevelData(level, levelData);
-//
-//        return true;
-//    }
-//    catch (const std::exception& e) {
-//        std::cerr << "Error parsing JSON string: " << e.what() << std::endl;
-//        return false;
-//    }
-//}
-//
-//LevelData LevelLoader::parseJson(const json& jsonData) {
-//    LevelData levelData;
-//
-//    levelData.width = jsonData.value("width", 100);
-//    levelData.height = jsonData.value("height", 100);
-//    levelData.tileWidth = jsonData.value("tilewidth", 32);
-//    levelData.tileHeight = jsonData.value("tileheight", 32);
-//
-//    levelData.backgroundPath = jsonData.value("backgroundPath", "");
-//    levelData.musicPath = jsonData.value("musicPath", "");
-//
-//    if (jsonData.contains("properties") && jsonData["properties"].is_array()) {
-//        levelData.properties = parseProperties(jsonData["properties"]);
-//    }
-//
-//    if (jsonData.contains("layers") && jsonData["layers"].is_array()) {
-//        for (const auto& layerJson : jsonData["layers"]) {
-//            LayerData layer;
-//            layer.name = layerJson.value("name", "");
-//            layer.visible = layerJson.value("visible", true);
-//
-//            if (layerJson.contains("tiles") && layerJson["tiles"].is_array()) {
-//                layer.tiles = parseTiles(layerJson["tiles"]);
-//            }
-//
-//            if (layerJson.contains("entities") && layerJson["entities"].is_array()) {
-//                layer.entities = parseEntities(layerJson["entities"]);
-//            }
-//
-//            levelData.layers.push_back(layer);
-//        }
-//    }
-//
-//    return levelData;
-//}
-//
-//std::vector<TileData> LevelLoader::parseTiles(const json& tilesJson) {
-//    std::vector<TileData> tiles;
-//
-//    for (const auto& tileJson : tilesJson) {
-//        TileData tile;
-//        tile.id = tileJson.value("id", 0);
-//        tile.x = tileJson.value("x", 0);
-//        tile.y = tileJson.value("y", 0);
-//        tile.collidable = tileJson.value("collidable", false);
-//        tile.type = tileJson.value("type", "");
-//
-//        if (tileJson.contains("properties") && tileJson["properties"].is_array()) {
-//            for (const auto& prop : tileJson["properties"]) {
-//                if (prop.contains("name") && prop.contains("value")) {
-//                    tile.properties.push_back(prop["value"].get<std::string>());
-//                }
-//            }
-//        }
-//
-//        tiles.push_back(tile);
-//    }
-//
-//    return tiles;
-//}
-//
-//std::vector<EntityData> LevelLoader::parseEntities(const json& entitiesJson) {
-//    std::vector<EntityData> entities;
-//
-//    for (const auto& entityJson : entitiesJson) {
-//        EntityData entity;
-//        entity.type = entityJson.value("type", "");
-//        entity.name = entityJson.value("name", "");
-//        entity.x = entityJson.value("x", 0.0f);
-//        entity.y = entityJson.value("y", 0.0f);
-//
-//        if (entityJson.contains("properties") && entityJson["properties"].is_array()) {
-//            entity.properties = parseProperties(entityJson["properties"]);
-//        }
-//
-//        entities.push_back(entity);
-//    }
-//
-//    return entities;
-//}
-//
-//std::vector<std::pair<std::string, std::string>> LevelLoader::parseProperties(const json& propertiesJson) {
-//    std::vector<std::pair<std::string, std::string>> properties;
-//
-//    for (const auto& propJson : propertiesJson) {
-//        if (propJson.contains("name") && propJson.contains("value")) {
-//            std::string name = propJson["name"];
-//            std::string value;
-//
-//            if (propJson["value"].is_string()) {
-//                value = propJson["value"].get<std::string>();
-//            }
-//            else if (propJson["value"].is_number()) {
-//                value = std::to_string(propJson["value"].get<float>());
-//            }
-//            else if (propJson["value"].is_boolean()) {
-//                value = propJson["value"].get<bool>() ? "true" : "false";
-//            }
-//            else {
-//                value = propJson["value"].dump();
-//            }
-//
-//            properties.emplace_back(name, value);
-//        }
-//    }
-//
-//    return properties;
-//}
-//
-//void LevelLoader::applyLevelData(Level* level, const LevelData& levelData) {
-//    level->setSize(levelData.width * levelData.tileWidth, levelData.height * levelData.tileHeight);
-//    level->setTileSize(levelData.tileWidth, levelData.tileHeight);
-//
-//    if (!levelData.backgroundPath.empty()) {
-//        level->setBackground(levelData.backgroundPath);
-//    }
-//
-//    if (!levelData.musicPath.empty()) {
-//        level->setMusic(levelData.musicPath);
-//    }
-//
-//    for (const auto& [key, value] : levelData.properties) {
-//        level->setProperty(key, value);
-//    }
-//
-//    Tilemap* tilemap = level->getTilemap();
-//    if (!tilemap) {
-//        tilemap = new Tilemap(levelData.width, levelData.height);
-//        level->setTilemap(tilemap);
-//    }
-//
-//    tilemap->setTileSize(levelData.tileWidth, levelData.tileHeight);
-//
-//    for (const auto& layerData : levelData.layers) {
-//        if (!layerData.visible) continue;
-//
-//        for (const auto& tileData : layerData.tiles) {
-//            tilemap->setTile(tileData.x, tileData.y, tileData.id);
-//
-//            if (tileData.collidable) {
-//                tilemap->setTileCollision(tileData.x, tileData.y, true);
-//            }
-//
-//            if (!tileData.type.empty()) {
-//                if (tileData.type == "spike") {
-//                    Hazard* hazard = new Hazard(10);
-//                    hazard->setPosition(tileData.x * levelData.tileWidth + levelData.tileWidth / 2,
-//                        tileData.y * levelData.tileHeight + levelData.tileHeight / 2);
-//                    hazard->setSize(levelData.tileWidth, levelData.tileHeight);
-//                    level->addEntity(hazard);
-//                }
-//            }
-//        }
-//
-//        for (const auto& entityData : layerData.entities) {
-//            Entity* entity = nullptr;
-//
-//            if (entityData.type == "player") {
-//                level->setPlayerStart(sf::Vector2f(entityData.x, entityData.y));
-//            }
-//            else if (entityData.type == "enemy") {
-//                std::string enemyType = "basic";
-//
-//                for (const auto& [key, value] : entityData.properties) {
-//                    if (key == "enemyType") {
-//                        enemyType = value;
-//                    }
-//                }
-//
-//                Enemy* enemy = nullptr;
-//
-//                if (enemyType == "flying") {
-//                    enemy = new Enemy(EnemyType::Flying);
-//                }
-//                else if (enemyType == "charging") {
-//                    enemy = new Enemy(EnemyType::Charging);
-//                }
-//                else if (enemyType == "ranged") {
-//                    enemy = new Enemy(EnemyType::Ranged);
-//                }
-//                else if (enemyType == "boss") {
-//                    enemy = new Enemy(EnemyType::Boss);
-//                }
-//                else {
-//                    enemy = new Enemy(EnemyType::Basic);
-//                }
-//
-//                enemy->setPosition(entityData.x, entityData.y);
-//                entity = enemy;
-//            }
-//            else if (entityData.type == "pickup") {
-//                std::string pickupType = "coin";
-//                int value = 1;
-//
-//                for (const auto& [key, value_str] : entityData.properties) {
-//                    if (key == "pickupType") {
-//                        pickupType = value_str;
-//                    }
-//                    else if (key == "value") {
-//                        value = std::stoi(value_str);
-//                    }
-//                }
-//
-//                Pickup* pickup = new Pickup(pickupType, value);
-//                pickup->setPosition(entityData.x, entityData.y);
-//                entity = pickup;
-//            }
-//            else if (entityData.type == "platform") {
-//                bool isMoving = false;
-//                bool isFalling = false;
-//
-//                for (const auto& [key, value] : entityData.properties) {
-//                    if (key == "moving" && value == "true") {
-//                        isMoving = true;
-//                    }
-//                    else if (key == "falling" && value == "true") {
-//                        isFalling = true;
-//                    }
-//                }
-//
-//                Platform* platform = new Platform(isMoving, isFalling);
-//                platform->setPosition(entityData.x, entityData.y);
-//
-//                if (isMoving) {
-//                    for (const auto& [key, value] : entityData.properties) {
-//                        if (key.rfind("waypoint", 0) == 0) {
-//                            std::istringstream ss(value);
-//                            std::string xStr, yStr;
-//                            std::getline(ss, xStr, ',');
-//                            std::getline(ss, yStr);
-//
-//                            try {
-//                                float x = std::stof(xStr);
-//                                float y = std::stof(yStr);
-//                                platform->addWaypoint(sf::Vector2f(x, y));
-//                            }
-//                            catch (const std::exception& e) {
-//                                std::cerr << "Invalid waypoint format: " << value << std::endl;
-//                            }
-//                        }
-//                    }
-//                }
-//
-//                entity = platform;
-//            }
-//            else if (entityData.type == "trigger") {
-//                Trigger* trigger = new Trigger();
-//                trigger->setPosition(entityData.x, entityData.y);
-//
-//                float width = 32.0f;
-//                float height = 32.0f;
-//
-//                std::string triggerTag = "";
-//                bool triggerOnce = true;
-//
-//                for (const auto& [key, value] : entityData.properties) {
-//                    if (key == "width") {
-//                        width = std::stof(value);
-//                    }
-//                    else if (key == "height") {
-//                        height = std::stof(value);
-//                    }
-//                    else if (key == "tag") {
-//                        triggerTag = value;
-//                    }
-//                    else if (key == "triggerOnce") {
-//                        triggerOnce = (value == "true");
-//                    }
-//                }
-//
-//                trigger->setSize(width, height);
-//                trigger->setTriggerTag(triggerTag);
-//                trigger->setTriggerOnce(triggerOnce);
-//
-//                entity = trigger;
-//            }
-//
-//            if (entity) {
-//                if (!entityData.name.empty()) {
-//                    entity->setName(entityData.name);
-//                }
-//
-//                level->addEntity(entity);
-//            }
-//        }
-//    }
-//
-//    level->initialize();
-//}
+#include "LevelLoader.h"
+#include "Level.h"
+#include "Tilemap.h"
+#include "RessourceManager.h"
+#include "Player.h"
+#include "Objects.h"
+#include <iostream>
+#include <filesystem>
+#include <fstream>
+#include <SFML/Graphics.hpp>
+
+bool LevelLoader::loadLevel(const std::string& jsonFilePath, Level* level) {
+    if (!level) {
+        std::cerr << "Error: Level pointer is null" << std::endl;
+        return false;
+    }
+
+    try {
+        std::cout << "Loading LDtk level from: " << jsonFilePath << std::endl;
+
+        // Lire le fichier JSON
+        std::ifstream file(jsonFilePath);
+        if (!file.is_open()) {
+            std::cerr << "Error: Could not open LDtk file: " << jsonFilePath << std::endl;
+            return false;
+        }
+
+        json projectData;
+        file >> projectData;
+        file.close();
+
+        // Obtenir le chemin de base pour les ressources
+        std::string basePath = getBasePath(jsonFilePath);
+
+        // Obtenir les informations générales du projet
+        int defaultGridSize = projectData["defaultGridSize"];
+        int defaultLevelWidth = projectData["defaultLevelWidth"];
+        int defaultLevelHeight = projectData["defaultLevelHeight"];
+
+        // Configurer les dimensions du niveau
+        level->setSize(defaultLevelWidth, defaultLevelHeight);
+        level->setTileSize(defaultGridSize, defaultGridSize);
+
+        // Initialiser la tilemap
+        Tilemap* tilemap = level->getTilemap();
+        if (!tilemap) {
+            tilemap = new Tilemap(defaultLevelWidth / defaultGridSize, defaultLevelHeight / defaultGridSize);
+            level->setTilemap(tilemap);
+        }
+        tilemap->setTileSize(defaultGridSize, defaultGridSize);
+
+        // Obtenir le niveau actuel (pour cet exemple, nous prenons simplement le premier niveau)
+        json currentLevel = getCurrentLevel(projectData);
+
+        if (currentLevel.empty()) {
+            std::cerr << "Error: No level found in LDtk file" << std::endl;
+            return false;
+        }
+
+        // Traiter les couches dans l'ordre inverse (de l'arrière vers l'avant)
+        auto& layerInstances = currentLevel["layerInstances"];
+        for (int i = layerInstances.size() - 1; i >= 0; i--) {
+            const auto& layer = layerInstances[i];
+            std::string layerType = layer["__type"];
+            std::string layerId = layer["__identifier"];
+
+            std::cout << "Processing layer: " << layerId << " (Type: " << layerType << ")" << std::endl;
+
+            if (layerType == "IntGrid") {
+                // Charger les collisions pour les couches IntGrid
+                loadCollisionsFromIntGrid(level, layer, defaultGridSize);
+            }
+            else if (layerType == "Tiles") {
+                // Charger les tuiles pour l'affichage
+                loadTileLayer(level, layer, projectData, basePath);
+            }
+            else if (layerType == "Entities") {
+                // Charger les entités
+                loadEntities(level, layer);
+            }
+        }
+
+        // Définir la position de départ du joueur 
+        // (rechercher une entité marquée comme point de départ ou utiliser une position par défaut)
+        sf::Vector2f playerStart(100, 100);
+        level->setPlayerStart(playerStart);
+
+        // Initialiser le niveau
+        level->initialize();
+
+        std::cout << "LDtk level loaded successfully" << std::endl;
+        return true;
+    }
+    catch (const std::exception& e) {
+        std::cerr << "Error loading LDtk level: " << e.what() << std::endl;
+        return false;
+    }
+}
+
+void LevelLoader::loadCollisionsFromIntGrid(Level* level, const json& layerData, int gridSize) {
+    Tilemap* tilemap = level->getTilemap();
+    if (!tilemap) return;
+
+    // Obtenir les dimensions de la grille
+    int gridWidth = layerData["__cWid"];
+    int gridHeight = layerData["__cHei"];
+
+    // Vérifier si la couche a des valeurs IntGrid
+    if (layerData.contains("intGridCsv")) {
+        const auto& intGridValues = layerData["intGridCsv"];
+
+        int collisionCount = 0;
+
+        for (int y = 0; y < gridHeight; y++) {
+            for (int x = 0; x < gridWidth; x++) {
+                int idx = y * gridWidth + x;
+                if (idx < intGridValues.size()) {
+                    int value = intGridValues[idx];
+                    if (value > 0) { // 0 = pas de collision, tout autre valeur = collision
+                        tilemap->setTile(x, y, value);
+                        tilemap->setTileCollision(x, y, true);
+                        collisionCount++;
+
+                        // Si c'est une collision mortelle (value = 2), on peut ajouter un traitement spécial ici
+                        if (value == 2) {
+                            // Marquer comme collision mortelle (dépend de votre implémentation)
+                            // tilemap->setDeadlyCollision(x, y, true);
+                        }
+                    }
+                }
+            }
+        }
+
+        std::cout << "Added " << collisionCount << " collision tiles from layer " << (std::string)layerData["__identifier"] << std::endl;
+    }
+}
+
+void LevelLoader::loadTileLayer(Level* level, const json& layerData, const json& project, const std::string& basePath) {
+    // Obtenir l'ID du tileset pour cette couche
+    int tilesetDefUid = layerData["__tilesetDefUid"];
+
+    // Trouver le tileset dans le projet
+    json tileset = findTileset(project, tilesetDefUid);
+    if (tileset.empty()) return;
+
+    // Obtenir le chemin relatif de la texture du tileset
+    std::string relPath = tileset["relPath"];
+    std::string tilesetId = tileset["identifier"];
+
+    // Charger la texture du tileset
+    RessourceManager* resourceManager = RessourceManager::getInstance();
+    sf::Texture* texture = nullptr;
+
+    if (resourceManager->loadTexture(tilesetId, basePath + relPath)) {
+        texture = resourceManager->getTexture(tilesetId);
+    }
+    else {
+        std::cerr << "Failed to load tileset texture: " << basePath + relPath << std::endl;
+        return;
+    }
+
+    if (!texture) return;
+
+    // Créer un sprite pour cette couche
+    auto layerSprite = std::make_unique<sf::RenderTexture>();
+    if (!layerSprite->create(level->getWidth(), level->getHeight())) {
+        std::cerr << "Failed to create render texture for layer" << std::endl;
+        return;
+    }
+    layerSprite->clear(sf::Color::Transparent);
+
+    // Obtenir les propriétés du tileset
+    int tileSize = tileset["tileGridSize"];
+    int tilesetWidth = tileset["__cWid"];
+
+    // Décoder les tuiles de la couche
+    std::vector<TileInfo> tiles = decodeTiles(layerData, tileSize);
+
+    // Dessiner chaque tuile dans la texture de la couche
+    sf::Sprite tileSprite(*texture);
+
+    for (const auto& tile : tiles) {
+        // Calculer la position de la tuile dans le tileset
+        int srcX = (tile.tileId % tilesetWidth) * tileSize;
+        int srcY = (tile.tileId / tilesetWidth) * tileSize;
+
+        // Configurer le rectangle source de la tuile
+        tileSprite.setTextureRect(sf::IntRect(srcX, srcY, tileSize, tileSize));
+        tileSprite.setPosition(tile.x, tile.y);
+
+        // Gérer le flip/rotation si nécessaire
+        if (tile.flipped || tile.rotated) {
+            // Implémenter selon les besoins...
+        }
+
+        // Dessiner la tuile dans la texture de la couche
+        layerSprite->draw(tileSprite);
+    }
+
+    layerSprite->display();
+
+    // Créer un sprite final pour cette couche et l'ajouter au niveau
+    auto finalSprite = std::make_unique<sf::Sprite>(layerSprite->getTexture());
+
+    // Configurer les propriétés de parallaxe de la couche si nécessaires
+    float parallaxFactorX = layerData.value("parallaxFactorX", 1.0f);
+    float parallaxFactorY = layerData.value("parallaxFactorY", 1.0f);
+
+    // Cas spécial pour les couches de fond
+    std::string layerId = layerData["__identifier"];
+    if (layerId == "RealBackground" || layerId == "Mid" || layerId == "Back") {
+        if (layerId == "RealBackground") {
+            // Définir comme fond principal
+            level->setBackground(texture);
+        }
+        else {
+            // Ajouter comme couche parallaxe supplémentaire
+            level->addParallaxLayer(finalSprite.get(), sf::Vector2f(parallaxFactorX, parallaxFactorY));
+        }
+    }
+    else {
+        // Ajouter comme couche de tuiles normale
+        level->addTileLayer(std::move(finalSprite));
+    }
+}
+
+void LevelLoader::loadEntities(Level* level, const json& layerData) {
+    if (!layerData.contains("entityInstances")) return;
+
+    const auto& entities = layerData["entityInstances"];
+
+    for (const auto& entityData : entities) {
+        std::string entityType = entityData["__identifier"];
+
+        // Créer l'entité en fonction de son type
+        Entity* entity = createEntityByType(entityType, entityData);
+
+        if (entity) {
+            // Configurer la position de l'entité
+            int pixelX = entityData["__grid"][0] * (int)entityData["__gridSize"];
+            int pixelY = entityData["__grid"][1] * (int)entityData["__gridSize"];
+            entity->setPosition(pixelX, pixelY);
+
+            // Ajouter l'entité au niveau
+            level->addEntity(entity);
+        }
+    }
+}
+
+json LevelLoader::findTileset(const json& project, int tilesetId) {
+    if (project.contains("defs") && project["defs"].contains("tilesets")) {
+        for (const auto& tileset : project["defs"]["tilesets"]) {
+            if (tileset["uid"] == tilesetId) {
+                return tileset;
+            }
+        }
+    }
+    return json();
+}
+
+sf::Texture* LevelLoader::loadTexture(const std::string& basePath, const std::string& relPath) {
+    RessourceManager* resourceManager = RessourceManager::getInstance();
+    std::string fullPath = basePath + relPath;
+
+    std::string id = relPath;
+    size_t lastSlash = relPath.find_last_of("/\\");
+    if (lastSlash != std::string::npos) {
+        id = relPath.substr(lastSlash + 1);
+    }
+
+    if (resourceManager->loadTexture(id, fullPath)) {
+        return resourceManager->getTexture(id);
+    }
+
+    return nullptr;
+}
+
+std::string LevelLoader::getBasePath(const std::string& jsonFilePath) {
+    std::filesystem::path path(jsonFilePath);
+    return path.parent_path().string() + "/";
+}
+
+Entity* LevelLoader::createEntityByType(const std::string& type, const json& entityData) {
+    // Par défaut, utiliser une simple entité
+    Entity* entity = nullptr;
+
+    // Vérifier le type d'entité et créer l'instance appropriée
+    if (type == "Player" || type == "PlayerStart") {
+        // Point de spawn du joueur, on ne crée pas d'entité mais on définit le point de départ
+        return nullptr;
+    }
+    else if (type == "Coin" || type == "Bitcoin") {
+        entity = new Pickup("Bitcoin", 1);
+    }
+    else if (type == "Health") {
+        entity = new Pickup("health", 20);
+    }
+    else if (type == "Checkpoint") {
+        entity = new Checkpoint();
+    }
+    else if (type == "Finish" || type == "Exit") {
+        Trigger* trigger = new Trigger();
+        trigger->setTriggerTag("finish");
+        entity = trigger;
+    }
+
+    // Configurer la taille et d'autres propriétés communes
+    if (entity) {
+        int width = entityData.value("width", 16);
+        int height = entityData.value("height", 16);
+        entity->setSize(sf::Vector2f(width, height));
+    }
+
+    return entity;
+}
+
+std::vector<LevelLoader::TileInfo> LevelLoader::decodeTiles(const json& layerData, int gridSize) {
+    std::vector<TileInfo> result;
+
+    // Si le layer contient des tiles au format grid
+    if (layerData.contains("gridTiles")) {
+        for (const auto& tile : layerData["gridTiles"]) {
+            TileInfo info;
+            info.tileId = tile["t"];
+            info.x = tile["px"][0];
+            info.y = tile["px"][1];
+
+            // Vérifier s'il y a des flags de flip/rotation
+            info.flipped = false;
+            info.rotated = false;
+            if (tile.contains("f")) {
+                info.flipped = tile["f"] > 0;
+            }
+            if (tile.contains("r")) {
+                info.rotated = tile["r"] > 0;
+            }
+
+            result.push_back(info);
+        }
+    }
+    // Si le layer contient des auto-layers
+    else if (layerData.contains("autoLayerTiles")) {
+        for (const auto& tile : layerData["autoLayerTiles"]) {
+            TileInfo info;
+            info.tileId = tile["t"];
+            info.x = tile["px"][0];
+            info.y = tile["px"][1];
+            info.flipped = false;
+            info.rotated = false;
+
+            result.push_back(info);
+        }
+    }
+
+    return result;
+}
+
+json LevelLoader::getCurrentLevel(const json& project) {
+    // Pour cet exemple, nous prenons le premier niveau trouvé
+    if (project.contains("levels") && !project["levels"].empty()) {
+        return project["levels"][0];
+    }
+
+    // S'il n'y a pas de niveaux dans le tableau "levels", chercher dans le monde
+    if (project.contains("worlds") && !project["worlds"].empty()) {
+        const auto& worlds = project["worlds"];
+        for (const auto& world : worlds) {
+            if (world.contains("levels") && !world["levels"].empty()) {
+                return world["levels"][0];
+            }
+        }
+    }
+
+    return json();
+}
