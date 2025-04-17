@@ -24,6 +24,7 @@ private:
         int tileId;
         int x, y;
         bool flipped;
+        bool flipY;    // Ajout pour supporter le flip vertical
         bool rotated;
     };
 
@@ -39,18 +40,15 @@ private:
     // Cherche le tileset par ID
     static json findTileset(const json& project, int tilesetId);
 
-    // Charge une texture à partir d'un chemin relatif
-    static sf::Texture* loadTexture(const std::string& basePath, const std::string& relPath);
-
-    // Obient le chemin de base du fichier JSON
-    static std::string getBasePath(const std::string& jsonFilePath);
-
-    // Crée une entité basée sur son type
-    static Entity* createEntityByType(const std::string& type, const json& entityData);
-
     // Décode les tuiles d'un layer (format de compression LDtk)
     static std::vector<TileInfo> decodeTiles(const json& layerData, int gridSize);
 
     // Obtient le niveau courant à partir du projet
     static json getCurrentLevel(const json& project);
+
+    // Crée une entité basée sur son type
+    static Entity* createEntityByType(const std::string& type, const json& entityData);
+
+    // Crée des entités par défaut pour tester
+    static void createDefaultEntities(Level* level);
 };

@@ -14,8 +14,8 @@ Application* Application::s_instance = nullptr;
 
 Application::Application()
     : m_appName("Platformer Game"),
-    m_windowWidth(1920),
-    m_windowHeight(1080),
+    m_windowWidth(2048),
+    m_windowHeight(512),
     m_isFullscreen(false),
     m_isVSyncEnabled(true),
     m_targetFPS(60),

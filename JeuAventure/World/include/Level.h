@@ -117,10 +117,6 @@ public:
     void addPlatformLayer(sf::Texture* texture);
 
     void addTileLayer(std::unique_ptr<sf::Sprite> layer);
-
-    // Ajout d'une couche de parallaxe
     void addParallaxLayer(sf::Sprite* sprite, const sf::Vector2f& parallaxFactor);
-
-    // Définir une texture comme fond (alternative à setBackground)
     void setBackground(sf::Texture* texture);
 };

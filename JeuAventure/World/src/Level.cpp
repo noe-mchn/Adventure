@@ -8,7 +8,6 @@
 #include "RessourceManager.h"
 #include <iostream>
 #include <algorithm>
-#include <Render.h>
 
 Level::Level(const std::string& name)
     : m_width(0.0f),
@@ -207,13 +206,15 @@ void Level::setBackground(const std::string& texturePath) {
         m_background = std::make_unique<Background>(*texture);
         sf::Vector2u texSize = texture->getSize();
 
-        float scaleX = 2248 / static_cast<float>(texSize.x);
-        float scaleY = 1080 / static_cast<float>(texSize.y);
+        float coefficient = 1.5f;
+        float scaleX = (m_width / static_cast<float>(texSize.x)) * coefficient;
+        float scaleY = (m_height / static_cast<float>(texSize.y)) * coefficient;
 
         m_background->setScale({ scaleX, scaleY });
-        m_background->setCameraPosition({ 2248.f / 2.f, 1080 / 2.f });
+        m_background->setCameraPosition({ m_width / 2.f, m_height / 2.f });
     }
 }
+
 
 
 Background* Level::getBackground() const {
@@ -420,13 +421,13 @@ void Level::addPlatformLayer(sf::Texture* texture) {
         auto platformSprite = std::make_unique<sf::Sprite>(*texture);
         sf::Vector2u texSize = texture->getSize();
 
-        float scaleX = 2248.f / static_cast<float>(texSize.x);
-        float scaleY = 512.f / static_cast<float>(texSize.y);
+        float coefficient = 1.5f;
+        float scaleX = (m_width / static_cast<float>(texSize.x)) * coefficient;
+        float scaleY = ((m_height * 0.3f) / static_cast<float>(texSize.y)) * coefficient;
         platformSprite->setScale(scaleX, scaleY);
 
         platformSprite->setOrigin(texSize.x / 2.f, texSize.y);
-
-        platformSprite->setPosition(2248.f / 2.f - 150.f, 1040);
+        platformSprite->setPosition(m_width / 2.f, m_height - 10.f);
 
         m_layers.push_back(std::move(platformSprite));
     }
@@ -451,17 +452,5 @@ void Level::setBackground(sf::Texture* texture) {
     }
 }
 
-// Dans Level.cpp (ajoutez cette fonction)
-// (Incluez les en-têtes nécessaires et assurez-vous que Level.h déclare addParallaxLayer)
-#include "Level.h"
-#include <iostream>
-
 void Level::addParallaxLayer(sf::Sprite* sprite, const sf::Vector2f& parallaxFactor) {
-    // Implémentation minimale
-    std::cout << "Level::addParallaxLayer called with parallax factor: "
-        << parallaxFactor.x << ", " << parallaxFactor.y << std::endl;
-
-    // Si vous avez un conteneur pour stocker les couches de parallax,
-    // vous pourriez ajouter quelque chose comme :
-    // m_parallaxLayers.push_back({ sprite, parallaxFactor });
 }

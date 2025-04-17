@@ -8,7 +8,6 @@
 #include <limits.h>
 #endif
 
-// Initialisation du singleton
 RessourceManager* RessourceManager::s_instance = nullptr;
 
 RessourceManager::RessourceManager() {
@@ -27,7 +26,6 @@ RessourceManager* RessourceManager::getInstance() {
 }
 
 bool RessourceManager::initialize() {
-    // Obtenir le chemin de l'exécutable
     std::filesystem::path execFilePath;
 
 #ifdef _WIN32
@@ -42,21 +40,18 @@ bool RessourceManager::initialize() {
 
     m_executablePath = execFilePath;
 
-    // Remonter 5 niveaux et accéder au dossier Ressources comme demandé
     try {
         m_resourceBasePath = execFilePath
-            .parent_path()  // Remonter au dossier parent de l'exécutable
-            .parent_path()  // Remonter encore...
+            .parent_path()
+            .parent_path()
             .parent_path()
             .parent_path()
             .parent_path() / "Ressources";
 
-        // Vérifier si le dossier existe
         if (!std::filesystem::exists(m_resourceBasePath)) {
             std::cerr << "ERREUR: Le dossier de ressources n'existe pas: "
                 << m_resourceBasePath << std::endl;
 
-            // Essayer de trouver des alternatives
             std::filesystem::path altPath = execFilePath.parent_path() / "Ressources";
             if (std::filesystem::exists(altPath)) {
                 std::cout << "Utilisation du chemin alternatif: " << altPath << std::endl;
@@ -86,10 +81,8 @@ bool RessourceManager::initialize() {
 }
 
 std::filesystem::path RessourceManager::getResourcePath(const std::string& relativePath) const {
-    // Construire le chemin complet
     std::filesystem::path fullPath = m_resourceBasePath / relativePath;
 
-    // Vérifier si le fichier existe
     if (!std::filesystem::exists(fullPath)) {
         std::cerr << "AVERTISSEMENT: Ressource introuvable: " << fullPath << std::endl;
     }
@@ -97,33 +90,25 @@ std::filesystem::path RessourceManager::getResourcePath(const std::string& relat
     return fullPath;
 }
 
-// TEXTURES
 bool RessourceManager::loadTexture(const std::string& id, const std::string& filename) {
-    // Ne pas recharger si déjà chargé
     if (m_textures.find(id) != m_textures.end()) {
         return true;
     }
 
-    // Construire le chemin de la texture
     auto filepath = getResourcePath(filename);
 
-    // Vérifier une alternative si le fichier n'a pas été trouvé dans Sprite
     if (!std::filesystem::exists(filepath)) {
-        // Essayer directement dans le dossier de niveau s'il s'agit d'un chargement de niveau
         if (filename.find("Level_") != std::string::npos) {
             filepath = getResourcePath(filename);
         }
 
-        // Si toujours pas trouvé, essayer le chemin direct
         if (!std::filesystem::exists(filepath)) {
             filepath = filename;
         }
     }
 
-    // Créer une nouvelle texture
     std::unique_ptr<sf::Texture> texture = std::make_unique<sf::Texture>();
 
-    // Charger la texture
     if (!texture->loadFromFile(filepath.string())) {
         std::cerr << "Échec du chargement de la texture: " << filepath << std::endl;
         return false;
@@ -131,7 +116,6 @@ bool RessourceManager::loadTexture(const std::string& id, const std::string& fil
 
     std::cout << "Texture chargée avec succès: " << id << " (" << filepath << ")" << std::endl;
 
-    // Stocker la texture
     m_textures[id] = std::move(texture);
     return true;
 }
@@ -146,25 +130,20 @@ sf::Texture* RessourceManager::getTexture(const std::string& id) {
     return nullptr;
 }
 
-// FONTS
+
 bool RessourceManager::loadFont(const std::string& id, const std::string& filename) {
-    // Ne pas recharger si déjà chargé
     if (m_fonts.find(id) != m_fonts.end()) {
         return true;
     }
 
-    // Construire le chemin de la police
     auto filepath = getResourcePath(filename);
 
-    // Essayer le chemin direct si le chemin construit ne fonctionne pas
     if (!std::filesystem::exists(filepath)) {
         filepath = filename;
     }
 
-    // Créer une nouvelle police
     std::unique_ptr<sf::Font> font = std::make_unique<sf::Font>();
 
-    // Charger la police
     if (!font->loadFromFile(filepath.string())) {
         std::cerr << "Échec du chargement de la police: " << filepath << std::endl;
         return false;
@@ -172,7 +151,6 @@ bool RessourceManager::loadFont(const std::string& id, const std::string& filena
 
     std::cout << "Police chargée avec succès: " << id << " (" << filepath << ")" << std::endl;
 
-    // Stocker la police
     m_fonts[id] = std::move(font);
     return true;
 }
@@ -187,25 +165,21 @@ sf::Font* RessourceManager::getFont(const std::string& id) {
     return nullptr;
 }
 
-// SOUND BUFFERS
+
 bool RessourceManager::loadSoundBuffer(const std::string& id, const std::string& filename) {
-    // Ne pas recharger si déjà chargé
+
     if (m_soundBuffers.find(id) != m_soundBuffers.end()) {
         return true;
     }
 
-    // Construire le chemin du son
     auto filepath = getResourcePath("Audio/" + filename);
 
-    // Essayer le chemin direct si le chemin construit ne fonctionne pas
     if (!std::filesystem::exists(filepath)) {
         filepath = filename;
     }
 
-    // Créer un nouveau buffer de son
     std::unique_ptr<sf::SoundBuffer> soundBuffer = std::make_unique<sf::SoundBuffer>();
 
-    // Charger le buffer de son
     if (!soundBuffer->loadFromFile(filepath.string())) {
         std::cerr << "Échec du chargement du son: " << filepath << std::endl;
         return false;
@@ -213,7 +187,6 @@ bool RessourceManager::loadSoundBuffer(const std::string& id, const std::string&
 
     std::cout << "Son chargé avec succès: " << id << " (" << filepath << ")" << std::endl;
 
-    // Stocker le buffer de son
     m_soundBuffers[id] = std::move(soundBuffer);
     return true;
 }
@@ -228,25 +201,21 @@ sf::SoundBuffer* RessourceManager::getSoundBuffer(const std::string& id) {
     return nullptr;
 }
 
-// MUSIC
+
 bool RessourceManager::loadMusic(const std::string& id, const std::string& filename) {
-    // Ne pas recharger si déjà chargé
+
     if (m_musics.find(id) != m_musics.end()) {
         return true;
     }
 
-    // Construire le chemin de la musique
     auto filepath = getResourcePath("Audio/" + filename);
 
-    // Essayer le chemin direct si le chemin construit ne fonctionne pas
     if (!std::filesystem::exists(filepath)) {
         filepath = filename;
     }
 
-    // Créer une nouvelle musique
     std::unique_ptr<sf::Music> music = std::make_unique<sf::Music>();
 
-    // Charger la musique
     if (!music->openFromFile(filepath.string())) {
         std::cerr << "Échec du chargement de la musique: " << filepath << std::endl;
         return false;
@@ -254,7 +223,6 @@ bool RessourceManager::loadMusic(const std::string& id, const std::string& filen
 
     std::cout << "Musique chargée avec succès: " << id << " (" << filepath << ")" << std::endl;
 
-    // Stocker la musique
     m_musics[id] = std::move(music);
     return true;
 }

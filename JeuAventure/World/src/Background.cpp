@@ -86,19 +86,14 @@ void Background::update(float dt) {
 }
 
 void Background::render(sf::RenderWindow& window) {
-    // Dessiner un rectangle de couleur d'arrière-plan
     sf::RectangleShape background(sf::Vector2f(window.getView().getSize().x, window.getView().getSize().y));
     background.setFillColor(m_backgroundColor);
 
-    // Sauvegarder la vue actuelle, passer à la vue par défaut pour dessiner le rectangle, puis restaurer la vue
     sf::View originalView = window.getView();
     window.setView(window.getDefaultView());
     window.draw(background);
     window.setView(originalView);
 
-
-    // Optionnel : si vous souhaitez dessiner le sprite de base 'm_sprite' une seule fois, vous pouvez le faire ici :
-    // window.draw(m_sprite);
 }
 
 
